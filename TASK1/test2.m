@@ -43,32 +43,42 @@ t=0:2000;
 delay=120;
 delayC=180;
 
-% filling tank
-h=0;
-V=[volume(h)]
+%% filling tank
+h=zeros(length(t),1);
+V=[0]
 Tvector=[0];
+Fc=Fcin;
 for k=2:length(t)
     if(k<delayC)
-        V(k)=V(k-1)+(Fh+Fd-outputFlow(h));
+        V(k)=V(k-1)+(Fh+Fd-outputFlow(h(k-1)));
+        dVdTdt=Fh*Th+Fd*Td-(Fh+Fd)*Tvector(k-1);
     else
-        V(k)=V(k-1)+(Fh+Fc+Fd-outputFlow(h));
+        V(k)=V(k-1)+(Fh+Fc+Fd-outputFlow(h(k-1)));
+        dVdTdt=Fh*Th+Fc*Tc+Fd*Td-(Fh+Fc+Fd)*Tvector(k-1);
     end
-    h=heightFromVolume(V(k));
+    h(k)=heightFromVolume(V(k));
     
-    dVdTdt=Fh*Th+Fc*Tc+Fd*Td-(Fh+Fc+Fd)*Tvector(k-1);
-    Tvector(k)=Tvector(k-1)+dVdTdt/V(k);
+    Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
-% figure
-% plot(t,V)
-% hold off
-% 
-% figure
-% plot(t,Tvector)
-% hold off
+figure
+plot(t,h)
+title("Napełnianie zbiornika")
+xlabel("t[s]");
+ylabel("h[cm]")
+hold off
+
+figure
+plot(t,Tvector)
+title("Temperatura w zbiorniku"+newline+"podczas napełniania zbiornika")
+xlabel("t[s]");
+ylabel("T[\circC]")
+hold off
 
 
-%static characteristics
+%% static characteristics
+%!!!!! IN STATIC CHARACTERISTIC DELAY DOES NOT MATTER
+
 h=81;
 V=[volume(h)]
 Tvector=[T];
@@ -105,19 +115,6 @@ xlabel('Fh');
 ylabel('Fc');
 title("Charakterystyka statyczna"+ newline+"wysokości słupa cieczy w zależności od"+newline+"dopływu cieplej i zimnej wody");
 hold off
-
-
-function F=outputFlow(h)
-    %a-> constant
-    a=7;
-    F=a*sqrt(h);
-end
-
-function V=volume(h)
-    %C-> constant
-    C=0.7;
-    V=C*power(h,2);
-end
 
 function h= heightFromVolume(V)
     %C-> constant
