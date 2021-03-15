@@ -1,33 +1,10 @@
 %% STATIC CHARACTERISTICS %%
 
-clear;
-close all;
-clc
-
-%DATA
-%F-> dV/dT [cm^3/s]
-%T-> temperature
-
-%INPUTS
-% Fh Fcin Fc Fd
-%Hot water
-Th=62;
-Fh=14;
-%Cold water
-Tc=23;
-Fcin=37;
-%Discruption
-Td=33;
-Fd=12;
-
-%OUTPUT
-Tout=0;
-F=0;
-
-h=81;
-T=33.57;
+%init data
+init
 
 %VARIABLES
+% overrides init
 % sample time
 Tp=1;
 t=0:Tp:2000;
