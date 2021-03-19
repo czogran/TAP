@@ -40,5 +40,5 @@ Tp=1;
 t=0:Tp:2000;
 
 %DELAY
-delay=120;
+delayT=120;
 delayC=180;

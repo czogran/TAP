@@ -1,28 +1,56 @@
+%%--SYMULACJA DZIAŁANIA OBIEKTU--%
+%Polecenie: Zasymulować działanie obiektu w Matlabie
 
-clc
-clear
-close all
+%init data
+init
 
-Tp=0.5;
-Y=[0];
-y=Y(1);
-xVector=0:Tp:5;
-for i=2:length(xVector)
-    x=xVector(i-1);
-    k1= fun(x,y);
-    k2= fun(x+Tp/2,y+Tp/2*k1);
-    k3= fun(x +Tp/2,y + Tp/2*k2);
-    k4= fun(x+Tp,y+Tp*k3);
+t=0:1000;
 
-    dy=Tp/6*(k1+2*k2+2*k3+k4);
-    Y(i)=Y(i-1)+dy;
-    y=Y(i);
+%% tank filling
+hVector=zeros(length(t),1);
+
+V=[0];
+Tvector=[0];
+ToutputVector=[0];
+
+Fc=Fcin;
+Finputs=[Fh,Fc,Fd];
+Tinputs=[Fh,Fc,Fd];
+
+% Euler "normal"
+for k=2:length(t)
+    h=hVector(k-1);
+    T=Tvector(k-1);
+    
+    if(k<delayC)
+      delayFc=0;  
+    else
+       delayFc=1;
+    end
+    
+   
+    dV=Tp*dVdt(h,delayFc, Finputs);
+    V(k)=V(k-1)+dV;
+    hVector(k)=heightFromVolume(V(k));
+    
+%     TODO-czy dobre indeksy??????
+    dT=dTdt(V(k),T,delayFc,Finputs,Tinputs);
+    Tvector(k)=Tvector(k-1)+dT;
+    
+    
+    if(k<=delayT)
+        ToutputVector(k)=0;
+    else
+        ToutputVector(k)=Tvector(k-delayT);
+    end
 end
-plot(xVector,Y)
 
-
-function f = fun(x,y)
-f=x;
-% f=1-x*y;
-%     f=1+2*x*y;
-end
+figure
+plot(t,Tvector)
+hold on
+plot(t,ToutputVector)
+title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą Eulera")
+xlabel("t[s]");
+ylabel("T[\circC]")
+legend("temperatura w zbiorniku", "temperatura na wyjsciu", 'Location','best')
+hold off
