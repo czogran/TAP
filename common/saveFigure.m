@@ -8,7 +8,7 @@
 % gdy wartoœci maj¹ kropki trzeba je zamieniæ, by móc zapisaæ w pliku
     % Estr=sprintf('%0.5f',E);
     % Estr=strrep(Estr,'.','-' );
-%  nazwa wykresu wa¿ne by pisaæ w "" a nie w '' bo wtdy nie dzia³a, robienie stringa w
+%  nazwa(name) wykresu wa¿ne by pisaæ w "" a nie w '' bo wtdy nie dzia³a, robienie stringa w
 %  zale¿noœci od parametrów wykresu
     % nazwa = "DMC_d"+D+"_N"+N+"_Nu"+Nu+"_lam"+lambda+"_e"+Estr; 
 % podpis jaki bêdzie pod wykresem na overleafie
@@ -20,15 +20,13 @@
 % œcie¿ka w której bêd¹ siê na overleafie rysunki znajdowaæ
     % overLeafFilePath="img/5_img/DMC/lambda/";
 % zapis do pliku     
-    % saveFigure(gcf, 'img/5img/DMC/',nazwa,fileName,overLeafFilePath,caption,label);
+    % saveFigure(gcf, 'img/5img/DMC/',name,fileName,overLeafFilePath,caption,label);
 
 % WA¯NA UWAGA, by nadpisaæ obecne rzeczy w pliku nale¿y odpaliæ skrypt po
-% 10 sod ostatniego wywo³ania, jest timer który kasuje wtedy zawartosæ
+% 10 sekundach od ostatniego wywo³ania, jest timer który kasuje wtedy zawartosæ
 % pliku
 function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
     saveas(figure,path+name,'epsc')
-    
- 
     
     fileContent={
     '\\begin{figure}[tb]'
@@ -42,7 +40,7 @@ function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
     fileContent=sprintf('%s\n',fileContent{:})
     
     global previousUsageTime;
-    if (isempty(previousUsageTime))
+     if (isempty(previousUsageTime))
         fileID = fopen(path+fileName+'.tex','w')
     else
         disp(posixtime(datetime())-previousUsageTime);

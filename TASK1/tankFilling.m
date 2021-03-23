@@ -1,7 +1,7 @@
 %%--SYMULACJA DZIAŁANIA OBIEKTU--%
 %Polecenie: Zasymulować działanie obiektu w Matlabie
 
-%init data
+%init data and inports
 init
 
 %% tank filling
@@ -142,3 +142,10 @@ xlabel("t[s]");
 ylabel("h[cm]")
 hold off
 
+name="method-comparison-flow";
+fileName="object-simulation";
+overLeafFilePath="img/object-simulation/";
+caption="Symulacja napełniania zbironika przy użyciu trzech różnych metod obliczeń numerycznych";
+label="fig:method-comparison-flow";
+
+saveFigure(gcf, 'img/object-simulation/',name,fileName,overLeafFilePath,caption,label);
