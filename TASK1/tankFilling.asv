@@ -107,16 +107,16 @@ for k=2:length(t)
     else
        delay=1;
     end
-    k1= dVdt(h, delay, Finputs);
-    k2= dVdt(h+Tp/2*k1,delay,Finputs);
-    k3= dVdt(h + Tp/2*k2,delay,Finputs);
-    k4= dVdt(h+Tp*k3,delay,Finputs);
+%     k1= dVdt(h, delay, Finputs);
+%     k2= dVdt(h+Tp/2*k1,delay,Finputs);
+%     k3= dVdt(h + Tp/2*k2,delay,Finputs);
+%     k4= dVdt(h+Tp*k3,delay,Finputs);
 %     
 %      k1= dVdt(h, delay, Finputs);
 %     k2= dVdt(h+Tp/2,delay,Finputs);
 %     k3= dVdt(h + Tp/2,delay,Finputs);
 %     k4= dVdt(h+Tp,delay,Finputs);
-% %     
+%     
 %        k1= dVdt(h, delay, Finputs);
 %     k2= dVdt(heightFromVolume(V(k-1) + Tp/2*k1),delay,Finputs);
 %     k3= dVdt(heightFromVolume(V(k-1) + Tp/2*k2),delay,Finputs);
