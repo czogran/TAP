@@ -8,6 +8,10 @@ function dTdt = dTdt(V,T,delay,Finputs,Tinputs)
     Td=Tinputs(3);
 
     T
+    if(V == 0)
+        dTdt = 0;
+        return
+    end
     if(delay == 0)
         dTdt=(Fh*Th+Fd*Td-(Fh+Fd)*T)/V;
         return

@@ -7,13 +7,16 @@ init
 %% tank filling
 hVector=zeros(length(t),1);
 
-V=[0];
-Tvector=[0];
-ToutputVector=[0];
+V=[];
+V = zeros(1, 2001);
+V(1) = 0;
+Tvector=zeros(1, 2001);
+Tvector(1) = 0;
+ToutputVector=zeros(1, 2001);
 
 Fc=Fcin;
 Finputs=[Fh,Fc,Fd];
-Tinputs=[Fh,Fc,Fd];
+Tinputs=[Th,Tc,Td];
 
 % Euler "normal"
 for k=2:length(t)
@@ -32,7 +35,7 @@ for k=2:length(t)
     hVector(k)=heightFromVolume(V(k));
     
 %     TODO-czy dobre indeksy??????
-    dT=dTdt(V(k),T,delayFc,Finputs,Tinputs);
+    dT=dTdt(V(k-1),T,delayFc,Finputs,Tinputs);
     Tvector(k)=Tvector(k-1)+dT;
     
     
@@ -42,6 +45,9 @@ for k=2:length(t)
         ToutputVector(k)=Tvector(k-delayT);
     end
 end
+
+eNormalT = Tvector;
+eNormalTout = ToutputVector;
 
 figure
 plot(t,hVector)
@@ -65,7 +71,8 @@ eNormal=hVector;
 % Euler modified
 for k=2:length(t)
     h=hVector(k-1);
-
+    T=Tvector(k-1);
+    
     if(k<delayC)
       delay=0;  
     else
@@ -77,10 +84,28 @@ for k=2:length(t)
    
    dV=Tp*dVdt(pomh,delay, Finputs);
    V(k)=V(k-1)+dV;
-   hVector(k)=heightFromVolume(V(k));
+   
+   pomT=T + 0.5*Tp*dTdt(V(k-1),T,delayFc,Finputs,Tinputs)
+   dT=Tp*dTdt(pomV,pomT,delayFc,Finputs,Tinputs);
+   Tvector(k)=Tvector(k-1)+dT;
     
+    
+   if(k<=delayT)
+       ToutputVector(k)=0;
+   else
+       ToutputVector(k)=Tvector(k-delayT);
+   end
+   
+   
+   hVector(k)=heightFromVolume(V(k));
+   
+   
+   
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
+
+eModifiedT = Tvector;
+eModifiedTout = ToutputVector;
 
 figure
 plot(t,hVector)
@@ -101,24 +126,43 @@ eModified = hVector;
 % rungy-kutta
 for k=2:length(t)
     h=hVector(k-1);
-
+    T=Tvector(k-1);
+    
     if(k<delayC)
       delay=0;  
     else
        delay=1;
     end
-    k1= dVdt(h, delay, Finputs);
-    k2= dVdt(h+Tp/2*k1,delay,Finputs);
-    k3= dVdt(h + Tp/2*k2,delay,Finputs);
-    k4= dVdt(h+Tp*k3,delay,Finputs);
+    kV1= dVdt(h, delay, Finputs);
+    kV2= dVdt(heightFromVolume(V(k-1) + Tp/2*kV1),delay,Finputs);
+    kV3= dVdt(heightFromVolume(V(k-1) + Tp/2*kV2),delay,Finputs);
+    kV4= dVdt(heightFromVolume(V(k-1) + Tp*kV3),delay,Finputs);
     
-    dV=Tp/6*(k1+2*k2+2*k3+k4);
+    kT1= dTdt(V(k-1),T,delay,Finputs,Tinputs);
+    kT2= dTdt(V(k-1) + Tp/2*kV1,T + Tp/2*kT1,delay,Finputs,Tinputs);
+    kT3= dTdt(V(k-1) + Tp/2*kV2,T + Tp/2*kT2,delay,Finputs,Tinputs);
+    kT4= dTdt(V(k-1) + Tp*kV3,T + Tp*kT3,delay,Finputs,Tinputs);
+    
+    dV=Tp/6*(kV1+2*kV2+2*kV3+kV4);
     V(k)=V(k-1)+dV;
+    
+    dT=Tp/6*(kT1+2*kT2+2*kT3+kT4);
     
     hVector(k)=heightFromVolume(V(k));
     
+    %dT=dTdt(V(k),T,delayFc,Finputs,Tinputs);
+    Tvector(k)=Tvector(k-1)+dT;
+    
+    if(k<=delayT)
+        ToutputVector(k)=0;
+    else
+        ToutputVector(k)=Tvector(k-delayT);
+    end
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
+
+rkT = Tvector;
+rkTout = ToutputVector;
 
 figure
 plot(t,hVector)
@@ -141,6 +185,18 @@ legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego K
 xlabel("t[s]");
 ylabel("h[cm]")
 hold off
+
+dlmwrite('DefModel_NorE.txt', [t' eNormal], 'delimiter', ' ')
+dlmwrite('DefModel_ModE.txt', [t' eModified], 'delimiter', ' ')
+dlmwrite('DefModel_RK4.txt', [t' rk], 'delimiter', ' ')
+
+dlmwrite('DefTModel_NorE.txt', [t' eNormalT'], 'delimiter', ' ')
+dlmwrite('DefTModel_ModE.txt', [t' eModifiedT'], 'delimiter', ' ')
+dlmwrite('DefTModel_RK4.txt', [t' rkT'], 'delimiter', ' ')
+
+dlmwrite('DefToutModel_NorE.txt', [t' eNormalTout'], 'delimiter', ' ')
+dlmwrite('DefToutModel_ModE.txt', [t' eModifiedTout'], 'delimiter', ' ')
+dlmwrite('DefToutModel_RK4.txt', [t' rkTout'], 'delimiter', ' ')
 
 name="method-comparison-flow";
 fileName="object-simulation";
