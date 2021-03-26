@@ -122,17 +122,17 @@ eModified = hVector;
 % xlabel("t[s]");
 % ylabel("T[\circC]")
 % hold off
-h0 = 80;
+h0 = 20;
 V0 = volume(h0);
-T0 = 30;
-hVector=ones(1, length(t))*0;
-hVectorLinearized=ones(1, length(t))*0;
+T0 = 20;
+hVector=ones(length(t), 1)*0;
+hVectorLinearized=ones(length(t), 1)*0;
 
 V=volume(hVector);
 VLinearized=volume(hVectorLinearized);
 
-TVector=ones(1, length(t))*0;
-TVectorLinearized=ones(1, length(t))*0;
+TVector=ones(length(t))*0;
+TVectorLinearized=ones(length(t), 1)*0;
 
 doVol = 0;
 
@@ -233,13 +233,13 @@ plot(t,rkTLinearized)
 title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą RK4")
 xlabel("t[s]");
 ylabel("T[\circC]")
-legend("temperatura w zbiorniku", "temperatura zlinearyzowana", 'Location','best')
+legend("temperatura w zbiorniku", "temperatura na wyjsciu", 'Location','best')
 hold off
 
 
 dlmwrite('DefModel_NorE.txt', [t' eNormal], 'delimiter', ' ')
 dlmwrite('DefModel_ModE.txt', [t' eModified], 'delimiter', ' ')
-dlmwrite('DefModel_RK4.txt', [t rk], 'delimiter', ' ')
+dlmwrite('DefModel_RK4.txt', [t' rk], 'delimiter', ' ')
 
 dlmwrite('DefTModel_NorE.txt', [t' eNormalT'], 'delimiter', ' ')
 dlmwrite('DefTModel_ModE.txt', [t' eModifiedT'], 'delimiter', ' ')

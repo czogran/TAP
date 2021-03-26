@@ -1,4 +1,4 @@
-function dTdt = dTdt(V,T,delay,Finputs,Tinputs)
+function dTdt = dTdtLinearized(V,V0,T,T0,delay,Finputs,Tinputs)
     Fh=Finputs(1);
     Fc=Finputs(2);
     Fd=Finputs(3);
@@ -12,10 +12,9 @@ function dTdt = dTdt(V,T,delay,Finputs,Tinputs)
         return
     end
     if(delay == 0)
-        dTdt=(Fh*Th+Fd*Td-(Fh+Fd)*T)/V;
+        dTdt=(Fh*Th+Fd*Td-(Fh+Fd)*T)/V ;
         return
     else
         dTdt=(Fh*Th+Fc*Tc+Fd*Td-(Fh+Fc+Fd)*T)/V;
     end
 end
-
