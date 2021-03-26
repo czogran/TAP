@@ -33,19 +33,16 @@ for i =  1: length(FhStatic)
         Tvector=[T];
         Finputs=[Fh, Fc,Fd];
         for k=2:length(t)
-            
-            k1= dVdt(h, delay, Finputs);
-            k2= dVdt(h+Tp/2*k1,delay,Finputs);
-            k3= dVdt(h + Tp/2*k2,delay,Finputs);
-            k4= dVdt(h+Tp*k3,delay,Finputs);
+            kV1= dVdt(h, delay, Finputs);
+            kV2= dVdt(heightFromVolume(V(k-1) + Tp/2*kV1),delay,Finputs);
+            kV3= dVdt(heightFromVolume(V(k-1) + Tp/2*kV2),delay,Finputs);
+            kV4= dVdt(heightFromVolume(V(k-1) + Tp*kV3),delay,Finputs);
 
-            dV=Tp/6*(k1+2*k2+2*k3+k4);
+
+            dV=Tp/6*(kV1+2*kV2+2*kV3+kV4);
             V(k)=V(k-1)+dV;
-    
             h=heightFromVolume(V(k));
 
-%             dVdTdt=Fh*Th+Fc*Tc+Fd*Td-(Fh+Fc+Fd)*Tvector(k-1);
-%             Tvector(k)=Tvector(k-1)+dVdTdt/V(k);
         end
         Vstatic(i,j) = V(end);
         hStatic(i,j)=heightFromVolume(V(end));

@@ -13,7 +13,7 @@ ToutputVector=[0];
 
 Fc=Fcin;
 Finputs=[Fh,Fc,Fd];
-Tinputs=[Fh,Fc,Fd];
+Tinputs=[Th,Tc,Td];
 
 % Euler "normal"
 for k=2:length(t)
@@ -26,7 +26,6 @@ for k=2:length(t)
        delayFc=1;
     end
     
-   
     dV=Tp*dVdt(h,delayFc, Finputs);
     V(k)=V(k-1)+dV;
     hVector(k)=heightFromVolume(V(k));
@@ -43,53 +42,68 @@ for k=2:length(t)
     end
 end
 
-figure
-plot(t,hVector)
-title("Napełnianie zbiornika" + newline + "symulacja metodą Eulera")
-xlabel("t[s]");
-ylabel("h[cm]")
-hold off
+eNormalT = Tvector;
+eNormalTout = ToutputVector;
+eNormalV=hVector;
 
-figure
-plot(t,Tvector)
-hold on
-plot(t,ToutputVector)
-title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą Eulera")
-xlabel("t[s]");
-ylabel("T[\circC]")
-legend("temperatura w zbiorniku", "temperatura na wyjsciu", 'Location','best')
-hold off
+% figure
+% plot(t,hVector)
+% title("Napełnianie zbiornika" + newline + "symulacja metodą Eulera")
+% xlabel("t[s]");
+% ylabel("h[cm]")
+% hold off
+% 
+% figure
+% plot(t,Tvector)
+% hold on
+% plot(t,ToutputVector)
+% title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą Eulera")
+% xlabel("t[s]");
+% ylabel("T[\circC]")
+% legend("temperatura w zbiorniku", "temperatura na wyjsciu", 'Location','best')
+% hold off
 
-eNormal=hVector;
 
 % Euler modified
 for k=2:length(t)
     h=hVector(k-1);
+    T=Tvector(k-1);
 
     if(k<delayC)
-      delay=0;  
+      delayFc=0;  
     else
-       delay=1;
+       delayFc=1;
     end
     
-   pomV=V(k-1)+0.5*Tp*dVdt(h,delay, Finputs);
+   pomV=V(k-1)+0.5*Tp*dVdt(h,delayFc, Finputs);
    pomh=heightFromVolume(pomV);
    
-   dV=Tp*dVdt(pomh,delay, Finputs);
+   dV=Tp*dVdt(pomh,delayFc, Finputs);
    V(k)=V(k-1)+dV;
    hVector(k)=heightFromVolume(V(k));
-    
-%     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
+   
+   pomT=T + 0.5*Tp*dTdt(V(k),T,delayFc,Finputs,Tinputs);
+   dT=Tp*dTdt(V(k-1),pomT,delayFc,Finputs,Tinputs);
+   Tvector(k)=Tvector(k-1)+dT;
+   
+   if(k<=delayT)
+       ToutputVector(k)=0;
+   else
+       ToutputVector(k)=Tvector(k-delayT);
+   end
+   
 end
 
-figure
-plot(t,hVector)
-title("Napełnianie zbiornika" + newline + "symulacja zmodyfikowaną metodą Eulera")
-xlabel("t[s]");
-ylabel("h[cm]")
-hold off
+eModifiedT = Tvector;
+eModifiedTout = ToutputVector;
+eModifiedV = hVector;
 
-eModified = hVector;
+% figure
+% plot(t,hVector)
+% title("Napełnianie zbiornika" + newline + "symulacja zmodyfikowaną metodą Eulera")
+% xlabel("t[s]");
+% ylabel("h[cm]")
+% hold off
 
 % figure
 % plot(t,Tvector)
@@ -101,55 +115,79 @@ eModified = hVector;
 % rungy-kutta
 for k=2:length(t)
     h=hVector(k-1);
+    T=Tvector(k-1);
 
     if(k<delayC)
       delay=0;  
     else
        delay=1;
     end
-    k1= dVdt(h, delay, Finputs);
-    k2= dVdt(h+Tp/2*k1,delay,Finputs);
-    k3= dVdt(h + Tp/2*k2,delay,Finputs);
-    k4= dVdt(h+Tp*k3,delay,Finputs);
-%     
-%      k1= dVdt(h, delay, Finputs);
-%     k2= dVdt(h+Tp/2,delay,Finputs);
-%     k3= dVdt(h + Tp/2,delay,Finputs);
-%     k4= dVdt(h+Tp,delay,Finputs);
-% %     
-%        k1= dVdt(h, delay, Finputs);
-%     k2= dVdt(heightFromVolume(V(k-1) + Tp/2*k1),delay,Finputs);
-%     k3= dVdt(heightFromVolume(V(k-1) + Tp/2*k2),delay,Finputs);
-%     k4= dVdt(heightFromVolume(V(k-1) + Tp*k3),delay,Finputs);
     
-    dV=Tp/6*(k1+2*k2+2*k3+k4);
+    kV1= dVdt(h, delay, Finputs);
+    kV2= dVdt(heightFromVolume(V(k-1) + Tp/2*kV1),delay,Finputs);
+    kV3= dVdt(heightFromVolume(V(k-1) + Tp/2*kV2),delay,Finputs);
+    kV4= dVdt(heightFromVolume(V(k-1) + Tp*kV3),delay,Finputs);
+    
+    
+    dV=Tp/6*(kV1+2*kV2+2*kV3+kV4);
     V(k)=V(k-1)+dV;
-    
     hVector(k)=heightFromVolume(V(k));
-    
-%     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
+            
+    kT1= dTdt(V(k-1),T,delay,Finputs,Tinputs);
+    kT2= dTdt(V(k-1) + Tp*V(k-1)/2,T + Tp/2*kT1,delay,Finputs,Tinputs);
+    kT3= dTdt(V(k-1) + Tp*V(k-1)/2,T + Tp/2*kT2,delay,Finputs,Tinputs);
+    kT4= dTdt(V(k-1) + Tp*V(k-1),T + Tp*kT3,delay,Finputs,Tinputs);       
+   
+    dT=Tp/6*(kT1+2*kT2+2*kT3+kT4);
+    Tvector(k)=Tvector(k-1)+ dT;
+
+    if(k<=delayT)
+        ToutputVector(k)=0;
+    else
+        ToutputVector(k)=Tvector(k-delayT);
+    end
 end
 
+rkV = hVector;
+rkT = Tvector;
+rkTout = ToutputVector;
+
+% figure
+% plot(t,hVector)
+% title("Napełnianie zbiornika" + newline + "symulacja metodą Rungego Kutty")
+% xlabel("t[s]");
+% ylabel("h[cm]")
+% hold off
+
 figure
-plot(t,hVector)
-title("Napełnianie zbiornika" + newline + "symulacja metodą Rungego Kutty")
-xlabel("t[s]");
-ylabel("h[cm]")
-hold off
-
-rk = hVector;
-
-
-figure
-plot(t,eNormal, 'r')
+plot(t,eNormalV, 'r')
 hold on
-plot(t,eModified,'g')
+plot(t,eModifiedV,'g')
 hold on
-plot(t, rk, 'b')
+plot(t, rkV, 'b')
 title("Napełnianie zbiornika" + newline + "symulacja metodą trzech różnych metod")
 legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
 xlabel("t[s]");
 ylabel("h[cm]")
+hold off
+
+figure
+plot(t,eNormalT, 'black')
+hold on
+plot(t,eNormalTout,'g')
+hold on
+plot(t,eModifiedT, 'r')
+hold on
+plot(t,eModifiedTout,'blue')
+hold on
+plot(t,rkT, 'r')
+hold on
+plot(t,rkTout,'blue')
+
+title("Napełnianie zbiornika" + newline +"temperatura"+newline + "symulacja metodą trzech różnych metod")
+% legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
+xlabel("t[s]");
+ylabel("T[\circC]")
 hold off
 
 name="method-comparison-flow";

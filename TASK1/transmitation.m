@@ -7,7 +7,6 @@ C=0.7;
 % sampe time
 Tp=2; 
 
-
 transmit = tf(1, [C,a* 0.5/sqrt(h0)]);
 
 method='zoh';
