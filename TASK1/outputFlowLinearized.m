@@ -5,4 +5,4 @@ function F=outputFlowLinearized(h,h0)
 end
 
      
-    F=a*((V0/C)^0.25+(0.25/(V0)^0.75)*C^0.25)*(V-V0));
+%     F=a*((V0/C)^0.25+(0.25/(V0)^0.75)*C^0.25)*(V-V0));

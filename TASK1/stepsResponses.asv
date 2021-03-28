@@ -6,7 +6,7 @@ init
 Tinputs=[Th,Tc,Td];
 
 FcVector =Fcin +[-20,-10,0,10,20]; 
-FhVector = Fh +[-14,-10,0,10,20]; 
+FhVector = Fh +[-20,-10,0,10,20]; 
 % FcVector =Fcin +[20]; 
 
 % FcVector=Fcin+10;
@@ -26,9 +26,6 @@ VL(1,:,:)=volume(hVectorLinearized(1));
 Tvector=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 TvectorL=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 
-TvectorOutput=ones(length(t),FcVectorLength,FhVectorLength)*T0;
-TvectorLOutput=ones(length(t),FcVectorLength,FhVectorLength)*T0;
-
 for j=1:length(FhVector)
     Fh=FhVector(j);
     
@@ -39,11 +36,10 @@ for j=1:length(FhVector)
         delay=1;
 
         if(k<delayC)
-            Fc=Fcin;
+            
         else
-           Fc=FcVector(i);
+            
         end 
-        Finputs=[Fh,Fc,Fd];
          
         h=hVector(k-1,i,j);
         hL=hVectorLinearized(k-1,i,j);
@@ -86,14 +82,6 @@ for j=1:length(FhVector)
         
         dTLinearized=Tp/6*(kT1L+2*kT2L+2*kT3L+kT4L);
         TvectorL(k,i,j)=TvectorL(k-1,i,j)+dTLinearized;
-        
-        if(k<=delayT)
-            TvectorOutput(k,i,j)=T0;
-            TvectorLOutput(k,i,j)=T0;
-        else
-            TvectorOutput(k,i,j)=Tvector(k-delayT,i,j);
-            TvectorLOutput(k,i,j)=TvectorL(k-delayT,i,j);
-        end
 
 %         TvectorL(k,i)=TvectorL(k-1,i)+dTdtLinearized(V(k,i),V0,TL,T0,delay,Finputs,Tinputs);
 
@@ -116,32 +104,18 @@ for j=1:FhVectorLength
     hold off
 end
 
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,Tvector(:,i,j), 'r')
-        hold on
-        plot(t,TvectorL(:,i,j),'g')
-        hold on
-    end
-    title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
-    legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-end
+% for j=1:FhVectorLength
+%     figure
+%     for i=1:FcVectorLength
+%         plot(t,Tvector(:,i), 'r')
+%         hold on
+%         plot(t,TvectorL(:,i),'g')
+%         hold on
+%     end
+%     title("Odpowiedzi skokowe temperatura TODO")
+%     legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
+%     xlabel("t[s]");
+%     ylabel("T[\circC]")
+%     hold off
+% end
 
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,TvectorOutput(:,i,j), 'r')
-        hold on
-        plot(t,TvectorLOutput(:,i,j),'g')
-        hold on
-    end
-    title("Odpowiedzi skokowe temperatura  wyjściowa TODO "+FhVector(j))
-    legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-end

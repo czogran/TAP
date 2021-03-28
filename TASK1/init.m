@@ -26,6 +26,7 @@ F=0;
 h=81;
 h0=81;
 T=33.57;
+T0=33.57;
 
 %ADJUSTABLE SIZES
 % h;
