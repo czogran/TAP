@@ -2,20 +2,32 @@ init
 
 % consts
 a=7;
-C=0.7;
+C0=0.7;
 
 % sampe time
-Tp=2; 
+Tp=1; 
+
+%transmit = tf({1 1 1}, {[1, a/(4*sqrt(sqrt(h0^3*C0)))] [1, a/(4*sqrt(sqrt(h0^3*C0)))] [1, a/(4*sqrt(sqrt(h0^3*C0)))]}, 'InputDelay', [0; 120; 0]);
+h0 = 81;
+V0 = volume(h0);
+
+B = [1, 1, 1, 0, 0, 0; Th0/V0 - T0/V0, Tc0/V0 - T0/V0, Td0/V0 - T0/V0, Fh0/V0, Fc0/V0, Fd0/V0];
+A = [-a/(sqrt(sqrt((V0^3)*C0))), 0; Fh0*T0/(V0^2) + Fc0*T0/(V0^2) + Fd0*T0/(V0^2) - Fh0*Th0/(V0^2) - Fc0*Tc0/(V0^2) - Fd0*Td0/(V0^2), -(Fh0/V0 + Fc0/V0 + Fd0/V0)];
+C = [1, 0;0, 1];
+D = [0, 0, 0, 0, 0, 0; 0, 0, 0, 0 ,0 , 0];
 
 
-transmit = tf(1, [C,a* 0.5/sqrt(h0)]);
+transmit = ss(A, B, C, D, 'InputDelay', [0, 180, 0, 0, 0, 0]);
+
 
 method='zoh';
-discreteTransmit=c2d(transmit,Tp,method); % transmitancja dyskretna
+%discreteTransmit=c2d(transmit,Tp,method); % transmitancja dyskretna
+t = 1:2000;
+u = [ones(1,2000)*Fh;ones(1,2000)*Fcin;ones(1,2000)*Fd;ones(1,2000)*Th;ones(1,2000)*Tc;ones(1,2000)*Td];
 
 figure
-step(transmit)
+lsim(transmit, u, t)
 hold on
-step(discreteTransmit)
+%step(discreteTransmit)
 hold off
 
