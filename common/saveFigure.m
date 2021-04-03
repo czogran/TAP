@@ -29,7 +29,7 @@ function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
     saveas(figure,path+name,'epsc')
     
     fileContent={
-    '\\begin{figure}[tb]'
+    '\\begin{figure}[h!]'
     '   \\centering'
     '   \\includegraphics{'+overLeafFilePath+name+'.eps}'
     '   \\caption{'+caption+'}'

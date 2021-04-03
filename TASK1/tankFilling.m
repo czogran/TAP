@@ -159,7 +159,7 @@ rkTout = ToutputVector;
 % ylabel("h[cm]")
 % hold off
 
-figure
+volumeFigure=figure
 plot(t,eNormalV, 'r')
 hold on
 plot(t,eModifiedV,'g')
@@ -171,29 +171,41 @@ xlabel("t[s]");
 ylabel("h[cm]")
 hold off
 
-figure
-plot(t,eNormalT, 'black')
+temperatureFigure=figure
+plot(t,eNormalT, 'b')
 hold on
 plot(t,eNormalTout,'g')
 hold on
 plot(t,eModifiedT, 'r')
 hold on
-plot(t,eModifiedTout,'blue')
+plot(t,eModifiedTout,'c')
 hold on
-plot(t,rkT, 'r')
+plot(t,rkT, 'k')
 hold on
-plot(t,rkTout,'blue')
+plot(t,rkTout,'m')
 
 title("Napełnianie zbiornika" + newline +"temperatura"+newline + "symulacja metodą trzech różnych metod")
-% legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
+legend("zwykła metoda Eulera T w zbiorniku","zwykła metoda Eulera T na wyjściu" ,...
+    "zmodyfikowana metoda Eulera T w zbiorniku", "zmodyfikowana metoda Eulera T na wyjściu", ...
+    "metoda Rungego Kutty T w zbiorniku","metoda Rungego Kutty T na wyjściu",...
+    'Location', 'best');
 xlabel("t[s]");
 ylabel("T[\circC]")
 hold off
 
-name="method-comparison-flow";
 fileName="object-simulation";
 overLeafFilePath="img/object-simulation/";
-caption="Symulacja napełniania zbironika przy użyciu trzech różnych metod obliczeń numerycznych";
-label="fig:method-comparison-flow";
+path=overLeafFilePath;
 
-saveFigure(gcf, 'img/object-simulation/',name,fileName,overLeafFilePath,caption,label);
+name="method-comparison-volume";
+caption="Symulacja napełniania zbironika przy użyciu trzech różnych metod obliczeń numerycznych";
+label="fig:method-comparison-volume";
+
+saveFigure(volumeFigure, path,name,fileName,overLeafFilePath,caption,label);
+
+
+name="method-comparison-temperature";
+caption="Symulacja zmian temperatury w zbiorniku i na wyjściu zbironika przy użyciu trzech różnych metod obliczeń numerycznych";
+label="fig:method-comparison-volume";
+
+saveFigure(temperatureFigure, path,name,fileName,overLeafFilePath,caption,label);
