@@ -6,8 +6,8 @@ init
 Tinputs=[Th,Tc,Td];
 F0inputs=[Fh,Fcin,Fd];
 
-FcVector =Fcin +[-20,-10,0,10,20]; 
-FhVector = Fh +[-14,-10,0,10,20]; 
+FcVector =Fcin ; 
+FhVector = Fh +[0,1; 
 
 % FcVector=Fcin+10;
 FcVectorLength = length(FcVector);
@@ -98,52 +98,8 @@ for j=1:length(FhVector)
 end
 end
 
-fileName="step-responses-h";
-overLeafFilePath="img/step-responses/h/";
-path=overLeafFilePath;
 
-legendLabels=[""];
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,hVector(:,i,j), 'r')
-        hold on
-        plot(t,hVectorLinearized(:,i,j),'g')
-        hold on
-        legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
-        legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
-    end
-    title("Odpowiedzi skokowe h dla"+newline+"Fh[$\frac{cm^3}{s}$]:" +FhVector(j),'Interpreter', 'latex');
-    legend(legendLabels, 'Location', 'best','Interpreter','latex')
-    xlabel("t[s]");
-    ylabel("h[cm]")
-    hold off
-    
-    name="stepResponseHFh"+FhVector(j);
-    caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseHFh"+FhVector(j);
 
-%     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
-end
-
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,Tvector(:,i,j), 'r')
-        hold on
-        plot(t,TvectorL(:,i,j),'g')
-        hold on
-    end
-    title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
-    legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-end
-
-fileName="step-responses-Tout";
-overLeafFilePath="img/step-responses/Tout/";
-path=overLeafFilePath;
 
 legendLabels=[""];
 for j=1:FhVectorLength
@@ -162,10 +118,4 @@ for j=1:FhVectorLength
     ylabel("T[\circC]")
     hold off
     
-    name="stepResponseToutFh"+FhVector(j);
-    caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseToutFh"+FhVector(j);
-
-    
-%     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
 end
