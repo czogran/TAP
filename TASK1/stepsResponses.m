@@ -11,9 +11,11 @@ F0inputs=[Fh,Fcin,Fd];
 FcVector =Fcin +[-20,-10,0,10,20]; 
 FhVector = Fh +[-14,-10,0,10,20]; 
 
-% FcVector=Fcin+10;
 FcVectorLength = length(FcVector);
 FhVectorLength = length(FhVector);
+
+FcU=ones(length(t),FcVectorLength,FhVectorLength)*Fcin;
+FhU=ones(length(t),FcVectorLength,FhVectorLength)*Fh;
 
 
 hVector=ones(length(t),FcVectorLength,FhVectorLength)*h0;
@@ -46,6 +48,9 @@ for j=1:length(FhVector)
            Fc=FcVector(i);
         end 
         Finputs=[Fh,Fc,Fd];
+        FhU(k,i,j)=Fh;
+        FcU(k,i,j)=Fc;
+
          
         h=hVector(k-1,i,j);
         hL=hVectorLinearized(k-1,i,j);
@@ -105,12 +110,21 @@ overLeafFilePath="img/step-responses/h/";
 path=overLeafFilePath;
 
 legendLabels=[""];
+
+
+fileName="step-responses";
+overLeafFilePath="img/step-responses/";
+path=overLeafFilePath;
+
 for j=1:FhVectorLength
-    figure
+   
+    legendLabels=[""];
+
+    heightFigure=figure
     for i=1:FcVectorLength
-        plot(t,hVector(:,i,j))
+        plot(t,hVector(:,i,j),'Color',colorLabels(i))
         hold on
-        plot(t,hVectorLinearized(:,i,j))
+        plot(t,hVectorLinearized(:,i,j),'Color',colorLabels(i),'LineStyle',"--")
         hold on
         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
@@ -121,39 +135,16 @@ for j=1:FhVectorLength
     ylabel("h[cm]")
     hold off
     
-    name="stepResponseHFh"+FhVector(j);
-    caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseHFh"+FhVector(j);
-
-%     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
-end
-
-for j=1:FhVectorLength
-    figure
+    heightName="stepResponseHFh"+FhVector(j);
+%     caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
+%     label="fig:stepResponseHFh"+FhVector(j);
+%     
+    legendLabels=[""];
+    tempFigure=figure
     for i=1:FcVectorLength
-        plot(t,Tvector(:,i,j))
+        plot(t,TvectorOutput(:,i,j),'Color',colorLabels(i))
         hold on
-        plot(t,TvectorL(:,i,j))
-        hold on
-    end
-    title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
-    legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-end
-
-fileName="step-responses-Tout";
-overLeafFilePath="img/step-responses/Tout/";
-path=overLeafFilePath;
-
-legendLabels=[""];
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,TvectorOutput(:,i,j))
-        hold on
-        plot(t,TvectorLOutput(:,i,j))
+        plot(t,TvectorLOutput(:,i,j),'Color',colorLabels(i),'LineStyle',"--")
         hold on
         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
@@ -164,10 +155,41 @@ for j=1:FhVectorLength
     ylabel("T[\circC]")
     hold off
     
-    name="stepResponseToutFh"+FhVector(j);
-    caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseToutFh"+FhVector(j);
-
+    tempName="stepResponseToutFh"+FhVector(j);
+%     caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
+%     label="fig:stepResponseToutFh"+FhVector(j);
     
-%     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
+
+    legendLabels="";
+    controlFigure=figure
+    sgtitle('Sterowania Fh i Fc') 
+    
+    subplot(2,1,1)
+    plot(t,FhU(:,1,j),'Color',colorLabels(i));
+    xlabel("t[s]");
+    ylabel("Fh[$\frac{cm^3}{s}$]",'Interpreter', 'latex')
+    title("Sterowanie Fh")
+   
+    axis([-50 t(end) min(FhU(:,1,j))-5 max(FhU(:,1,j))+5])
+    hold off
+    
+    subplot(2,1,2)
+    for i=1:FcVectorLength
+        plot(t,FcU(:,i,j))
+        hold on
+        legendLabels(i)="Fc sterowanie: " +FcVector(i);
+    end
+    title("Sterowanie Fc");
+    xlabel("t[s]");
+    ylabel("Fc[$\frac{cm^3}{s}$]",'Interpreter', 'latex')
+
+    legend(legendLabels, 'Location', 'best', 'Interpreter','latex')
+    hold off
+    
+    controlName="stepResponseU"+FhVector(j);
+    
+    caption="Wykresy dla odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
+    label="fig:stepResponsesFh"+FhVector(j);
+
+    saveFiguresInColumn([heightFigure,tempFigure,controlFigure], path,[heightName,tempName,controlName],fileName,overLeafFilePath,caption,label);
 end

@@ -3,6 +3,9 @@ clear;
 close all;
 addpath('..\common\');
 
+% SETTINGS
+colorLabels=['m','c','r','g','b','w','k','y'];
+
 %DATA
 %F-> dV/dT [cm^3/s]
 %T-> temperature

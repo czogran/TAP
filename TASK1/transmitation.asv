@@ -18,39 +18,14 @@ transmitHFh = tf(1, [2*C*h0,a* 0.5/sqrt(h0) ]);
 transmitVFd = tf(1, [1 ,a* 0.25/sqrt(sqrt(C*(V0^3)))]);
 transmitHFd = tf(1, [2*C*h0,a* 0.5/sqrt(h0) ]);
 
-transmitVFcFigure=figure
-step(transmitVFc)
-title("Transmitancja objętości w zbiorniku po skoku Fc")
-
-transmitVFhFigure=figure
+figure
+subplot
 step(transmitVFh)
-title("Transmitancja objętości w zbiorniku po skoku Fh")
 
-transmitVFdFigure=figure
-step(transmitVFd)
-title("Transmitancja objętości w zbiorniku po skoku Fd")
+title("Transmitancja Objętości w zbiorniku")
 
-
-
-
-
-
-
-transmitHFcFigure=figure
-step(transmitHFc)
-title("Transmitancja wysokości słupa cieczy w zbiorniku po skoku Fc")
-
-transmitHFhFigure=figure
-step(transmitHFh)
-title("Transmitancja wysokości słupa cieczy w zbiorniku po skoku Fh")
-
-transmitHFhFigure=figure
-step(transmitHFd)
-title("Transmitancja wysokości słupa cieczy w zbiorniku po skoku Fd")
-
-
-% figure
-% step(transmitH)
+figure
+step(transmitH)
 
 
  Numerator = {[Th-T0] [0.8 72.3]}; %Numerators of u_1 and u_2

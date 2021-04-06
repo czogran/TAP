@@ -19,9 +19,7 @@ function dTdt = dTdtLinearized(V,V0,T,T0,delay,Finputs,F0inputs,Tinputs,T0inputs
         dTdt = 0;
         return
     end
-    
-
-    
+   
     if(delay == 0)
         dTdt=(Fh0*Th0+Fd0*Td0-(Fh0+Fd0)*T0)/V0-...
         (Fh0+Fd0)/V0*(T-T0)+...

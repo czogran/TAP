@@ -25,21 +25,40 @@
 % WA¯NA UWAGA, by nadpisaæ obecne rzeczy w pliku nale¿y odpaliæ skrypt po
 % 10 sekundach od ostatniego wywo³ania, jest timer który kasuje wtedy zawartosæ
 % pliku
-function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
-    saveas(figure,path+name,'epsc')
-    
-    fileContent={
+function  saveFiguresInColumn(figures,path,names,fileName,overLeafFilePath,caption,label)
+    fileContent = {  
     '\\begin{figure}[h!]'
     '   \\centering'
-    '   \\includegraphics{'+overLeafFilePath+name+'.eps}'
+    };
+
+    for i = 1:length(figures)
+        saveas(figures(i),path+names(i),'epsc')
+
+        innerFileContent={
+            '   \\begin{subfigure}[b]{0.7\textwidth}'
+            '      \\includegraphics[width=1\linewidth]{'+overLeafFilePath+names(i)+'.eps}'
+            '      \\caption{}'
+            '      \\label{fig:'+ label+i+'}'
+            '   \\end{subfigure}'
+            '       '
+        };
+    
+%         fileContent
+%         innerFileContent
+        
+        fileContent=[fileContent; innerFileContent];
+    end
+
+    endOFileContent={    
     '   \\caption{'+caption+'}'
     '   \\label{'+label+'}'
     '\\end{figure}'
-    '            '
+    '           '
     };
+    fileContent=[fileContent; endOFileContent]
+    
     fileContent=sprintf('%s\n',fileContent{:})
-    Unknown command option padded.
-
+    
     global previousUsageTime;
      if (isempty(previousUsageTime))
         fileID = fopen(path+fileName+'.tex','w')
@@ -53,6 +72,9 @@ function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
         end
     end
     previousUsageTime=posixtime(datetime());
+
+    w=99999
+    fileContent
 
     fprintf(fileID,fileContent);
     fclose(fileID);

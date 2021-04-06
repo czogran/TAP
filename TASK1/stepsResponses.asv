@@ -11,9 +11,11 @@ F0inputs=[Fh,Fcin,Fd];
 FcVector =Fcin +[-20,-10,0,10,20]; 
 FhVector = Fh +[-14,-10,0,10,20]; 
 
-% FcVector=Fcin+10;
 FcVectorLength = length(FcVector);
 FhVectorLength = length(FhVector);
+
+FcU=ones(length(t),FcVectorLength,FhVectorLength)*Fcin;
+FhU=ones(length(t),FcVectorLength,FhVectorLength)*Fh;
 
 
 hVector=ones(length(t),FcVectorLength,FhVectorLength)*h0;
@@ -46,6 +48,9 @@ for j=1:length(FhVector)
            Fc=FcVector(i);
         end 
         Finputs=[Fh,Fc,Fd];
+        FhU(k,i,j)=Fh;
+        FcU(k,i,j)=Fc;
+
          
         h=hVector(k-1,i,j);
         hL=hVectorLinearized(k-1,i,j);
@@ -105,10 +110,175 @@ overLeafFilePath="img/step-responses/h/";
 path=overLeafFilePath;
 
 legendLabels=[""];
+% for j=1:FhVectorLength
+%     figure
+%     for i=1:FcVectorLength
+%         plot(t,hVector(:,i,j))
+%         hold on
+%         plot(t,hVectorLinearized(:,i,j))
+%         hold on
+%         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
+%         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
+%     end
+%     title("Odpowiedzi skokowe h dla"+newline+"Fh[$\frac{cm^3}{s}$]:" +FhVector(j),'Interpreter', 'latex');
+%     legend(legendLabels, 'Location', 'best','Interpreter','latex')
+%     xlabel("t[s]");
+%     ylabel("h[cm]")
+%     hold off
+%     
+%     name="stepResponseHFh"+FhVector(j);
+%     caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
+%     label="fig:stepResponseHFh"+FhVector(j);
+% 
+% %     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
+% end
+
+% for j=1:FhVectorLength
+%     figure
+%     for i=1:FcVectorLength
+%         plot(t,Tvector(:,i,j))
+%         hold on
+%         plot(t,TvectorL(:,i,j))
+%         hold on
+%     end
+%     title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
+%     legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
+%     xlabel("t[s]");
+%     ylabel("T[\circC]")
+%     hold off
+% end
+
+fileName="step-responses";
+overLeafFilePath="img/step-responses/";
+path=overLeafFilePath;
+
 for j=1:FhVectorLength
-    figure
+   
+    legendLabels=[""];
+
+    heightFigure=figure
     for i=1:FcVectorLength
-        plot(t,hVector(:,i,j))
+        plot(t,hVector(:,i,j)\begin{figure}[h!]
+   \centering
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseHFh0.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh01}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseToutFh0.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh02}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseU0.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh03}
+   \end{subfigure}
+       
+   \caption{Wykresy dla odpowiedzi skokowej Fh[$\frac{cm^3}{s}$]: 0}
+   \label{fig:stepResponsesFh0}
+\end{figure}
+           
+\begin{figure}[h!]
+   \centering
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseHFh4.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh41}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseToutFh4.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh42}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseU4.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh43}
+   \end{subfigure}
+       
+   \caption{Wykresy dla odpowiedzi skokowej Fh[$\frac{cm^3}{s}$]: 4}
+   \label{fig:stepResponsesFh4}
+\end{figure}
+           
+\begin{figure}[h!]
+   \centering
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseHFh14.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh141}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseToutFh14.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh142}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseU14.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh143}
+   \end{subfigure}
+       
+   \caption{Wykresy dla odpowiedzi skokowej Fh[$\frac{cm^3}{s}$]: 14}
+   \label{fig:stepResponsesFh14}
+\end{figure}
+           
+\begin{figure}[h!]
+   \centering
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseHFh24.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh241}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseToutFh24.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh242}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseU24.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh243}
+   \end{subfigure}
+       
+   \caption{Wykresy dla odpowiedzi skokowej Fh[$\frac{cm^3}{s}$]: 24}
+   \label{fig:stepResponsesFh24}
+\end{figure}
+           
+\begin{figure}[h!]
+   \centering
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseHFh34.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh341}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseToutFh34.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh342}
+   \end{subfigure}
+       
+   \begin{subfigure}[b]{0.6\textwidth}
+      \includegraphics[width=1\linewidth]{img/step-responses/stepResponseU34.eps}
+      \caption{}
+      \label{fig:fig:stepResponsesFh343}
+   \end{subfigure}
+       
+   \caption{Wykresy dla odpowiedzi skokowej Fh[$\frac{cm^3}{s}$]: 34}
+   \label{fig:stepResponsesFh34}
+\end{figure}
+           
+)
         hold on
         plot(t,hVectorLinearized(:,i,j))
         hold on
@@ -121,39 +291,16 @@ for j=1:FhVectorLength
     ylabel("h[cm]")
     hold off
     
-    name="stepResponseHFh"+FhVector(j);
-    caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseHFh"+FhVector(j);
-
-%     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
-end
-
-for j=1:FhVectorLength
-    figure
+    heightName="stepResponseHFh"+FhVector(j);
+%     caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
+%     label="fig:stepResponseHFh"+FhVector(j);
+%     
+    legendLabels=[""];
+    tempFigure=figure
     for i=1:FcVectorLength
-        plot(t,Tvector(:,i,j))
+        plot(t,TvectorOutput(:,i,j),'Color',colorLabels(i))
         hold on
-        plot(t,TvectorL(:,i,j))
-        hold on
-    end
-    title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
-    legend("charakterystyka dynamiczna","charakterystyka zlinearyzowana", 'Location', 'best')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-end
-
-fileName="step-responses-Tout";
-overLeafFilePath="img/step-responses/Tout/";
-path=overLeafFilePath;
-
-legendLabels=[""];
-for j=1:FhVectorLength
-    figure
-    for i=1:FcVectorLength
-        plot(t,TvectorOutput(:,i,j))
-        hold on
-        plot(t,TvectorLOutput(:,i,j))
+        plot(t,TvectorLOutput(:,i,j),'Color',colorLabels(i),'LineStyle',"--")
         hold on
         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
@@ -164,10 +311,41 @@ for j=1:FhVectorLength
     ylabel("T[\circC]")
     hold off
     
-    name="stepResponseToutFh"+FhVector(j);
-    caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
-    label="fig:stepResponseToutFh"+FhVector(j);
-
+    tempName="stepResponseToutFh"+FhVector(j);
+%     caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
+%     label="fig:stepResponseToutFh"+FhVector(j);
     
-    saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
+
+    legendLabels="";
+    controlFigure=figure
+    sgtitle('Sterowania Fh i Fc') 
+    
+    subplot(2,1,1)
+    plot(t,FhU(:,1,j),'Color',colorLabels(i));
+    xlabel("t[s]");
+    ylabel("Fh[$\frac{cm^3}{s}$]",'Interpreter', 'latex')
+    title("Sterowanie Fh")
+   
+    axis([-50 t(end) min(FhU(:,1,j))-5 max(FhU(:,1,j))+5])
+    hold off
+    
+    subplot(2,1,2)
+    for i=1:FcVectorLength
+        plot(t,FcU(:,i,j))
+        hold on
+        legendLabels(i)="Fc sterowanie: " +FcVector(i);
+    end
+    title("Sterowanie Fc");
+    xlabel("t[s]");
+    ylabel("Fc[$\frac{cm^3}{s}$]",'Interpreter', 'latex')
+
+    legend(legendLabels, 'Location', 'best', 'Interpreter','latex')
+    hold off
+    
+    controlName="stepResponseU"+FhVector(j);
+    
+    caption="Wykresy dla odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
+    label="fig:stepResponsesFh"+FhVector(j);
+
+    saveFiguresInColumn([heightFigure,tempFigure,controlFigure], path,[heightName,tempName,controlName],fileName,overLeafFilePath,caption,label);
 end
