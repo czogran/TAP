@@ -160,19 +160,19 @@ saveFiguresInColumn([transformVFcFigure,transformVFhFigure,transformVFdFigure], 
 captionH="Wykresy dla transmitancji wysokości słupa cieczy w zbiorniku";
 labelH="fig:transformH";
 
-saveFiguresInColumn([transformHFcFigure,transformHFhFigure,transformHFdFigure], path,...
-    ["transformHFc","transformHFh","transformHFd"],fileName,overLeafFilePath,captionH,labelH);
-
-
-captionTF="Wykresy dla transmitancji temperatury wyjściowej po zmianie dopływu cieczy";
-labelTF="fig:transformTF";
-
-saveFiguresInColumn([transformTFcFigure,transformTFhFigure,transformTFdFigure], path,...
-    ["transformTFc","transformTFh","transformTFd"],fileName,overLeafFilePath,captionTF,labelTF);
-
-
-captionTT="Wykresy dla transmitancji temperatury wyjściowej po zmianie temperatury cieczy";
-labelTT="fig:transformTT";
-
-saveFiguresInColumn([transformTTcFigure,transformTThFigure,transformTThFigure], path,...
-    ["transformTTc","transformTTh","transformTTh"],fileName,overLeafFilePath,captionTT,labelTT);
+% saveFiguresInColumn([transformHFcFigure,transformHFhFigure,transformHFdFigure], path,...
+%     ["transformHFc","transformHFh","transformHFd"],fileName,overLeafFilePath,captionH,labelH);
+% 
+% 
+% captionTF="Wykresy dla transmitancji temperatury wyjściowej po zmianie dopływu cieczy";
+% labelTF="fig:transformTF";
+% 
+% saveFiguresInColumn([transformTFcFigure,transformTFhFigure,transformTFdFigure], path,...
+%     ["transformTFc","transformTFh","transformTFd"],fileName,overLeafFilePath,captionTF,labelTF);
+% 
+% 
+% captionTT="Wykresy dla transmitancji temperatury wyjściowej po zmianie temperatury cieczy";
+% labelTT="fig:transformTT";
+% 
+% saveFiguresInColumn([transformTTcFigure,transformTThFigure,transformTThFigure], path,...
+%     ["transformTTc","transformTTh","transformTTh"],fileName,overLeafFilePath,captionTT,labelTT);
