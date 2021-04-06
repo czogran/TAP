@@ -4,6 +4,8 @@
 init
     
 Tinputs=[Th,Tc,Td];
+T0inputs=[Th,Tc,Td];
+
 F0inputs=[Fh,Fcin,Fd];
 
 FcVector =Fcin +[-20,-10,0,10,20]; 
@@ -79,10 +81,10 @@ for j=1:length(FhVector)
         Tvector(k,i,j)=Tvector(k-1,i,j)+ dT;
         
 
-        kT1L= dTdtLinearized(VL(k-1,i,j),V0,TL,T0,delay,Finputs,F0inputs,Tinputs);
-        kT2L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV1L,V0,TL + Tp/2*kT1L,T0,delay,Finputs,F0inputs,Tinputs);
-        kT3L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV2L,V0,TL + Tp/2*kT2L,T0,delay,Finputs,F0inputs,Tinputs);
-        kT4L= dTdtLinearized(VL(k-1,i,j) + Tp*kV3L,V0,TL + Tp*kT3L,T0,delay,Finputs,F0inputs,Tinputs);
+        kT1L= dTdtLinearized(VL(k-1,i,j),V0,TL,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT2L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV1L,V0,TL + Tp/2*kT1L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT3L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV2L,V0,TL + Tp/2*kT2L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT4L= dTdtLinearized(VL(k-1,i,j) + Tp*kV3L,V0,TL + Tp*kT3L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
         
         dTLinearized=Tp/6*(kT1L+2*kT2L+2*kT3L+kT4L);
         TvectorL(k,i,j)=TvectorL(k-1,i,j)+dTLinearized;
@@ -106,9 +108,9 @@ legendLabels=[""];
 for j=1:FhVectorLength
     figure
     for i=1:FcVectorLength
-        plot(t,hVector(:,i,j), 'r')
+        plot(t,hVector(:,i,j))
         hold on
-        plot(t,hVectorLinearized(:,i,j),'g')
+        plot(t,hVectorLinearized(:,i,j))
         hold on
         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
@@ -120,7 +122,7 @@ for j=1:FhVectorLength
     hold off
     
     name="stepResponseHFh"+FhVector(j);
-    caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\frac{cm^3}{s}$]: "+FhVector(j);
+    caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
     label="fig:stepResponseHFh"+FhVector(j);
 
 %     saveFigure(gcf, path,name,fileName,overLeafFilePath,caption,label);
@@ -129,9 +131,9 @@ end
 for j=1:FhVectorLength
     figure
     for i=1:FcVectorLength
-        plot(t,Tvector(:,i,j), 'r')
+        plot(t,Tvector(:,i,j))
         hold on
-        plot(t,TvectorL(:,i,j),'g')
+        plot(t,TvectorL(:,i,j))
         hold on
     end
     title("Odpowiedzi skokowe temperatura TODO "+FhVector(j))
@@ -149,9 +151,9 @@ legendLabels=[""];
 for j=1:FhVectorLength
     figure
     for i=1:FcVectorLength
-        plot(t,TvectorOutput(:,i,j), 'r')
+        plot(t,TvectorOutput(:,i,j))
         hold on
-        plot(t,TvectorLOutput(:,i,j),'g')
+        plot(t,TvectorLOutput(:,i,j))
         hold on
         legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
         legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FcVector(i);
@@ -163,7 +165,7 @@ for j=1:FhVectorLength
     hold off
     
     name="stepResponseToutFh"+FhVector(j);
-    caption=("Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j));
+    caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
     label="fig:stepResponseToutFh"+FhVector(j);
 
     
