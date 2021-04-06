@@ -34,17 +34,7 @@ transformTTd=tf(Fd,[V0, (Fh+Fd+Fcin)], 'OutputDelay', delayT );
 
 plotTransforms
 
-%  Numerator = {[Th-T0] [0.8 72.3]}; %Numerators of u_1 and u_2
-%  Denominator = {[V0, (Fh+Fd+Fcin)] [1 21.8 60]}; %Denominators of u_1 and u_2
-%  transformT = tf(Numerator,Denominator)
-% 
-% figure
-% stepplot(transformT)
-% title("ww")
 
-% method='zoh';
-% discreteTransmit=c2d(transmit,Tp,method); % transmitancja dyskretna
-% 
 
 
 % figure
