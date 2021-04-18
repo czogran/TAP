@@ -3,9 +3,11 @@ function dVdt = dVdt(h, delay, Finputs)
     Fc=Finputs(2);
     Fd=Finputs(3);
 
+    a=7;
+    F=a*sqrt(h);
     if(delay == 0)
-        dVdt=Fh+Fd-outputFlow(h);
+        dVdt=Fh+Fd-F;
     else
-        dVdt=Fh+Fc+Fd-outputFlow(h);
+        dVdt=Fh+Fc+Fd-F;
     end
 end

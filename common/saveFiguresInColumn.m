@@ -35,7 +35,7 @@ function  saveFiguresInColumn(figures,path,names,fileName,overLeafFilePath,capti
         saveas(figures(i),path+names(i),'epsc')
 
         innerFileContent={
-            '   \\begin{subfigure}[b]{0.6\\textwidth}'
+            '   \\begin{subfigure}[b]{0.4\\textwidth}'
             '      \\includegraphics[width=1\\linewidth]{'+overLeafFilePath+names(i)+'.eps}'
             '      \\caption{}'
             '      \\label{fig:'+ label+i+'}'

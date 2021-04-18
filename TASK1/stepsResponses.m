@@ -17,7 +17,6 @@ FhVectorLength = length(FhVector);
 FcU=ones(length(t),FcVectorLength,FhVectorLength)*Fcin;
 FhU=ones(length(t),FcVectorLength,FhVectorLength)*Fh;
 
-
 hVector=ones(length(t),FcVectorLength,FhVectorLength)*h0;
 hVectorLinearized=ones(length(t),FcVectorLength,FhVectorLength)*h0;
 
@@ -136,9 +135,7 @@ for j=1:FhVectorLength
     hold off
     
     heightName="stepResponseHFh"+FhVector(j);
-%     caption="Poziom cieczy w zbiorniku w odpowiedzi skokowej dla skoku Fh[$\\frac{cm^3}{s}$]: "+FhVector(j);
-%     label="fig:stepResponseHFh"+FhVector(j);
-%     
+     
     legendLabels=[""];
     tempFigure=figure
     for i=1:FcVectorLength
@@ -156,9 +153,6 @@ for j=1:FhVectorLength
     hold off
     
     tempName="stepResponseToutFh"+FhVector(j);
-%     caption="Temperatura na wyjściu zbiornika w odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
-%     label="fig:stepResponseToutFh"+FhVector(j);
-    
 
     legendLabels="";
     controlFigure=figure
@@ -191,5 +185,5 @@ for j=1:FhVectorLength
     caption="Wykresy dla odpowiedzi skokowej Fh[$"+"\\"+"frac{cm^3}{s}$]: "+FhVector(j);
     label="fig:stepResponsesFh"+FhVector(j);
 
-    saveFiguresInColumn([heightFigure,tempFigure,controlFigure], path,[heightName,tempName,controlName],fileName,overLeafFilePath,caption,label);
+%     saveFiguresInColumn([heightFigure,tempFigure,controlFigure], path,[heightName,tempName,controlName],fileName,overLeafFilePath,caption,label);
 end

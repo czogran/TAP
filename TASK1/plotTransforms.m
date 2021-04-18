@@ -133,7 +133,7 @@ legend(legendLabels, 'Location','best');
 title("Transmitancja temperatury w zbiorniku po hipotetycznym skoku Th")
 
 legendLabels="";
-transformTFTFigure=figure
+transformTTdFigure=figure
 step(transformTTd)
 hold on
 for i=1:length(Tp)
@@ -171,8 +171,8 @@ labelH="fig:transformH";
 %     ["transformTFc","transformTFh","transformTFd"],fileName,overLeafFilePath,captionTF,labelTF);
 % 
 % 
-% captionTT="Wykresy dla transmitancji temperatury wyjściowej po zmianie temperatury cieczy";
-% labelTT="fig:transformTT";
-% 
-% saveFiguresInColumn([transformTTcFigure,transformTThFigure,transformTThFigure], path,...
-%     ["transformTTc","transformTTh","transformTTh"],fileName,overLeafFilePath,captionTT,labelTT);
+captionTT="Wykresy dla transmitancji temperatury wyjściowej po zmianie temperatury cieczy";
+labelTT="fig:transformTT";
+
+saveFiguresInColumn([transformTTcFigure,transformTThFigure,transformTTdFigure], path,...
+    ["transformTTc","transformTTh","transformTTd"],fileName,overLeafFilePath,captionTT,labelTT);

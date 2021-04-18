@@ -128,7 +128,6 @@ for k=2:length(t)
     kV3= dVdt(heightFromVolume(V(k-1) + Tp/2*kV2),delay,Finputs);
     kV4= dVdt(heightFromVolume(V(k-1) + Tp*kV3),delay,Finputs);
     
-    
     dV=Tp/6*(kV1+2*kV2+2*kV3+kV4);
     V(k)=V(k-1)+dV;
     hVector(k)=heightFromVolume(V(k));

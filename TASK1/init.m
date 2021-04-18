@@ -4,7 +4,7 @@ close all;
 addpath('..\common\');
 
 % SETTINGS
-colorLabels=['m','c','r','g','b','w','k','y'];
+colorLabels=['m','c','r','g','b','k','y'];
 
 %DATA
 %F-> dV/dT [cm^3/s]
@@ -30,6 +30,8 @@ h=81;
 h0=81;
 T=33.57;
 T0=33.57;
+
+V0=volume(h0);
 
 %ADJUSTABLE SIZES
 % h;

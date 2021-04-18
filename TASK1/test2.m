@@ -1,31 +1,85 @@
 % STEP RESPONSES
 
 %init variables
-init
-    
+clc;
+clear;
+close all;
+
+%DATA
+%F-> dV/dT [cm^3/s]
+%T-> temperature
+
+%INPUTS
+% Fh Fcin Fc Fd
+%Hot water
+Th=62;
+Fh=14;
+%Cold water
+Tc=23;
+Fcin=37;
+%Discruption
+Td=33;
+Fd=12;
+
+%OUTPUT
+Tout=0;
+F=0;
+
+h=81;
+h0=81;
+T=33.57;
+T0=33.57;
+
+%ADJUSTABLE SIZES
+% h;
+% Tout;
+
+%CONTROL VALUES
+% Fh;
+% Fcin-> Fc delayed;
+
+%VARIABLES
+% sample time
+Tp=1;
+t=0:Tp:2000;
+
+%DELAY
+delayT=120;
+delayC=180;  
+
+% temperature inputs
 Tinputs=[Th,Tc,Td];
+T0inputs=[Th,Tc,Td];
+
+% inputs in work point
 F0inputs=[Fh,Fcin,Fd];
 
-FcVector =[Fcin] ; 
-FhVector = Fh +[0,1]; 
+% Vectors of control steps
+FcVector =Fcin +[-20,-10,0,10,20]; 
+FhVector = Fh +[-14,-10,0,10,20]; 
 
-% FcVector=Fcin+10;
+% auxiliary variables
 FcVectorLength = length(FcVector);
 FhVectorLength = length(FhVector);
 
-
+% output vectors of height in tank and linearized height
 hVector=ones(length(t),FcVectorLength,FhVectorLength)*h0;
 hVectorLinearized=ones(length(t),FcVectorLength,FhVectorLength)*h0;
 
-V=zeros(length(t),FcVectorLength,FhVectorLength);
+% volume in work point and output vector of volume in tank
 V0=volume(hVector(1));
+V=zeros(length(t),FcVectorLength,FhVectorLength);
 V(1,:,:)=V0;
+
+% linearized volume in work point and output vector of linearzied volume in tank
 VL=zeros(length(t),FcVectorLength,FhVectorLength);
 VL(1,:,:)=volume(hVectorLinearized(1));
 
+% temperature in tank and linearized temperature
 Tvector=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 TvectorL=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 
+% temperature in tank output and linearized temperature
 TvectorOutput=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 TvectorLOutput=ones(length(t),FcVectorLength,FhVectorLength)*T0;
 
@@ -79,10 +133,10 @@ for j=1:length(FhVector)
         Tvector(k,i,j)=Tvector(k-1,i,j)+ dT;
         
 
-        kT1L= dTdtLinearized(VL(k-1,i,j),V0,TL,T0,delay,Finputs,F0inputs,Tinputs);
-        kT2L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV1L,V0,TL + Tp/2*kT1L,T0,delay,Finputs,F0inputs,Tinputs);
-        kT3L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV2L,V0,TL + Tp/2*kT2L,T0,delay,Finputs,F0inputs,Tinputs);
-        kT4L= dTdtLinearized(VL(k-1,i,j) + Tp*kV3L,V0,TL + Tp*kT3L,T0,delay,Finputs,F0inputs,Tinputs);
+        kT1L= dTdtLinearized(VL(k-1,i,j),V0,TL,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT2L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV1L,V0,TL + Tp/2*kT1L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT3L= dTdtLinearized(VL(k-1,i,j) + Tp/2*kV2L,V0,TL + Tp/2*kT2L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
+        kT4L= dTdtLinearized(VL(k-1,i,j) + Tp*kV3L,V0,TL + Tp*kT3L,T0,delay,Finputs,F0inputs,Tinputs,T0inputs);
         
         dTLinearized=Tp/6*(kT1L+2*kT2L+2*kT3L+kT4L);
         TvectorL(k,i,j)=TvectorL(k-1,i,j)+dTLinearized;
@@ -98,24 +152,3 @@ for j=1:length(FhVector)
 end
 end
 
-
-
-
-legendLabels=[""];
-for j=1:FcVectorLength
-    figure
-    for i=1:FhVectorLength
-        plot(t,TvectorOutput(:,j,i), 'r')
-        hold on
-        plot(t,TvectorLOutput(:,j,i),'g')
-        hold on
-        legendLabels(2*i-1)="Fc[$\frac{cm^3}{s}$]:" +FhVector(i);
-        legendLabels(2*i)="linearyzacja Fc[$\frac{cm^3}{s}$]:" +FhVector(i);
-    end
-    title("Odpowiedzi skokowe temperatury wyjsciowej dla"+newline+"Fc[$\frac{cm^3}{s}$]:" +FcVector(j),'Interpreter', 'latex');
-    legend(legendLabels, 'Location', 'best', 'Interpreter','latex')
-    xlabel("t[s]");
-    ylabel("T[\circC]")
-    hold off
-    
-end
