@@ -1,0 +1,81 @@
+   Dzień dobry
+
+>     * *proszę przysłać pliki z kodem programów*. – oczywiście jeśli
+>       potrzeba prześlemy. Wolelibyśmy jednak dodać Pana do naszego
+>       repozytorium na GitHubie, ponieważ pracujemy na branchach i się
+>       miejscami one różnią. Też w ten sposób miałby Pan pełniejszy obraz
+>       pracy. Będziemy wdzięczni za podanie nicku na gicie, ponieważ
+>       repozytorium jest prywatne
+
+   Proszę przysłać.
+
+>     * *w liniowym modelu w przestrzeni stanu powinny być tylko dwie
+>       zmienne stanu (obiekt jest drugiego rzędu). Stałe, jeśli zachodzi
+>       taka potrzeba, można po prostu dodawać do równań stanu*-  my
+>       zrobiliśmy uogólniony model, w którym traktujemy temperaturę, czy
+>       Fd jako wejście, ponieważ I tak potrzebujemy tego do badania
+>       zakłóceń itd. Jeśli dobrze rozumiemy to należy napisać wzory tylko
+>       od wejść Fh I Fc? Jeśli tak wzory poprawimy, ale część
+>       programistyczna nadal zostanie sparametryzowana, gdyż wtedy
+>       łatwiej nam się pracuje
+
+   Nie, wejść w modelu powinno być tyle, ile Panowie potrzebują (zarówno sterujących jak i zakłócających) chodzi o to, że obiekt jest drugiego rzędu więc zmienne stanu powinny być dwie.
+
+>     * *jednym z wyjść modelu liniowego powinna być wysokość słupa
+>       cieczy'. Trzeba zmodyfikować macierz C, przy czym trzeba także
+>       pamiętać o linearyzacji zależności nieliniowej*- przeprowadziliśmy
+>       testy zarówno z linearyzacją V I h. Rozumiemy żeby zmienić na h.
+>       Jak było zamieszczone w listingach kod był z linearyzacją h, ale
+>       nie linearyzowaliśmy konwersji z V do h. Jaka jest merytoryczna
+>       konieczność, by ją też zlinearyzować? Też zdaje się, że do
+>       wyliczania transmitancji wstawialiśmy pod dV Ch^2 I potem
+>       linearyzowaliśmy. Czy do odpowiedzi skokowych (symulacji obiektu)
+>       należy w podobny sposób zlinearyzować, czy raczej zlinearyzować
+>       zależność h=sqrt(V/C) [nam się wydaje że to drugie]. Lub może to
+>       nie ma znaczenia?
+
+   Jednym z Panów zadań jest opracowanie modelu liniowego. Żeby taki uzyskać, trzeba zlinearyzować cały model nieliniowy (zarówno równania stanu jak i wyjścia).  Jedną ze zmiennych sterowanych jest wysokość słupa cieczy, dlatego musi być ona zmienną wyjściową modelu (zarówno w przestrzeni stanu jak i transmitancyjnego).
+
+>     * *brakuje opóźnienia wyjścia Tout w transmitancjach*- tak racja,
+>       dziękujemy za znalezienie, we wzorach zapomnieliśmy, jednak w
+>       implementacji zostało to uwzględnione wykresy powinny być poprawne.
+>     * *podczas eksperymentów powinno być zmieniane tylko jedno
+>       wymuszenie naraz (pozostałe sygnały powinny być utrzymywane na
+>       wartościach z początkowego punktu pracy), żeby łatwiej było
+>       analizować otrzymane odpowiedzi;* - przyjmujemy to jako kwestię
+>       UX- ponieważ obecnie z tych wykresów co są da się odczytać Fh przy
+>       Fc w punkcie pracy, tylko, że też są na ich uwzględnione inne
+>       wartości dla Fc. Usuniemy te wykresy I dodamy jeden, prostszy, dla
+>       stałego Fc I zmian Fh.**
+>     * *trzeba więc dodać wykresy ze zmianami sterowania Fh przy stałej
+>       wartości sterowania Fc*- jak wyżej, są ale trzeba je “wypatrzeć”,
+>       dodamy**
+>     * *jeśli legenda zasłania część rysunku, lepiej jest przenieść opis
+>       w niej zawarty do podpisu – *też kwestia UX, dodawaliśmy z
+>       ‘Location’, ‘best’ I zdajemy sobie sprawę że może być nieczytelne.
+>       Dodamy legend jako oddzielne ploty, czy jakoś ładnie ją zawrzemy.**
+>     * *proszę porównać działanie transmitancji ciągłych z działaniem
+>       ciągłego modelu w przestrzeni stanu* –* *ok**
+
+   Znakomicie, powodzenia!
+
+>     * *warto także sprawdzić, czy nie można uprościć niektórych
+>       transmitancji* – tu też zostały rozpisane transmitancję
+>       wszystkiego po prawie wszystkim (bez V). Trzeba zostawić tylko
+>       transmitancje wyjść h i Tout od Fcin I Fh? Czy też możemy też
+>       dopisać wszystkiego po wszystkim. Ale zdajmy sobie sprawę że w
+>       obecnej formie też da się pewnie uprościć.**
+
+   W uproszczeniu chodziło mi o to, żeby, w przypadku transmitancji drugiego rzędu, sprawdzili Panowie i porównali wartości zer i biegunów. 
+Być może da się te transmitancje uprościć. Proszę zauważyć, że otrzymane przez Panów przebiegi sugerują, że transmitancje powinny być inercjami z opóźnieniem.
+
+>     * *proszę podać równania modelu liniowego w przestrzeni stanu po
+>       dyskretyzacji (z macierzami parametrów) i porównanie jego
+>       działania z działaniem ciągłego modelu liniowego w przestrzeni
+>       stanu* *– *Zatem listing nie starczą? Porównamy.**
+
+   Nie wystarczą, potrzebne jest porównanie.
+
+   Życzę owocnej pracy i pozdrawiam,
+   Piotr Marusak
+
