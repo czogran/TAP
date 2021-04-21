@@ -1,29 +1,33 @@
 % PID Controller Design at the Command Line
 
-sys = zpk([],[-1 -1 -1],1); 
-sys = tf(1, [1 3 3 1]);
-s
-[C_pi,info] = pidtune(sys,'PI')
+s = tf('s','TimeUnit','minutes');
+G = [87.8 -86.4 ; 108.2 -109.6]/(75*s+1);
+G.InputName = {'L','V'};
+G.OutputName = 'y';
 
-T_pi = feedback(C_pi*sys, 1);
-step(T_pi)
+D = tunableGain('Decoupler',eye(2));
+D.u = 'e';
+D.y = {'pL','pV'};
 
-[C_pi_fast,info] = pidtune(sys,'PI',1.0)
+C_L = tunablePID('C_L','pi');  
+C_L.TimeUnit = 'minutes';
+C_L.u = 'pL'; 
+C_L.y = 'L';
 
-T_pi_fast = feedback(C_pi_fast*sys,1);
-step(T_pi,T_pi_fast)
-axis([0 30 0 1.4])
-legend('PI','PI,fast')
+C_L.Kp.Value=1;
 
-[C_pidf_fast,info] = pidtune(sys,'PIDF',1.0)
+C_V = tunablePID('C_V','pi');  
+C_V.TimeUnit = 'minutes';
+C_V.u = 'pV'; 
+C_V.y = 'V';
 
-T_pidf_fast =  feedback(C_pidf_fast*sys,1);
-step(T_pi_fast, T_pidf_fast);
-axis([0 30 0 1.4]);
-legend('PI,fast','PIDF,fast');
 
-S_pi_fast = feedback(sys,C_pi_fast);
-S_pidf_fast = feedback(sys,C_pidf_fast);
-step(S_pi_fast,S_pidf_fast);
-axis([0 50 0 0.4]);
-legend('PI,fast','PIDF,fast');
+C_V.Kp.Value=1;
+
+
+Sum = sumblk('e = r - y',2);
+
+CLry = connect(G,D,C_L,C_V,Sum,'r','y');
+
+
+lsim(CLry, ones(2,1000),1:1000)

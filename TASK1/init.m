@@ -2,9 +2,8 @@ clc;
 clear;
 close all;
 addpath('..\common\');
+addpath('..\common\utils\');
 
-% SETTINGS
-colorLabels=['m','c','r','g','b','k','y'];
 
 %DATA
 %F-> dV/dT [cm^3/s]
@@ -22,17 +21,29 @@ Fcin=37;
 Td=33;
 Fd=12;
 
+Th0=62;
+Fh0=14;
+%Cold water
+Tc0=23;
+Fc0=37;
+%Discruption
+Td0=33;
+Fd0=12;
+
+
+
 %OUTPUT
 Tout=0;
 F=0;
 
 h=81;
 h0=81;
+
+V0 = volume(h0);
+
+
 T=33.57;
-T0=33.57;
-
-V0=volume(h0);
-
+T0 = T;
 %ADJUSTABLE SIZES
 % h;
 % Tout;

@@ -8,7 +8,7 @@ C0=0.7;
 % sampe time
 Tp=1; 
 
-addconst = 1;
+addconst = 0;
 
 %transmit = tf({1 1 1}, {[1, a/(4*sqrt(sqrt(h0^3*C0)))] [1, a/(4*sqrt(sqrt(h0^3*C0)))] [1, a/(4*sqrt(sqrt(h0^3*C0)))]}, 'InputDelay', [0; 120; 0]);
 h0 = 81;
@@ -28,4 +28,4 @@ end
 
 
 
-transmit = ss(A, B, C, D, 'InputDelay', [0, 180, 0, 0, 0, 0]);
+transmit = ss(A, B, C, D, 'InputDelay', [0, 180, 0, 0, 0, 0], 'OutputDelay',[0, 120]);

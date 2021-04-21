@@ -32,7 +32,7 @@ transformTTh=tf(Fh,[V0, (Fh+Fd+Fcin)], 'OutputDelay', delayT );
 transformTTc=tf(Fcin,[V0, (Fh+Fd+Fcin)], 'InputDelay',delayC, 'OutputDelay', delayT );
 transformTTd=tf(Fd,[V0, (Fh+Fd+Fcin)], 'OutputDelay', delayT );
 
-plotTransforms
+% plotTransforms
 
 
 

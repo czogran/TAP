@@ -38,7 +38,6 @@ function  saveFigure(figure,path,name,fileName,overLeafFilePath,caption,label)
     '            '
     };
     fileContent=sprintf('%s\n',fileContent{:})
-    Unknown command option padded.
 
     global previousUsageTime;
      if (isempty(previousUsageTime))
