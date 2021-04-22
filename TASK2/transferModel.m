@@ -28,4 +28,7 @@ end
 
 
 
-transmit = ss(A, B, C, D, 'InputDelay', [0, 180, 0, 0, 0, 0], 'OutputDelay',[0, 120]);
+transmit = ss(A, B, C, D, 'InputDelay', [0, 180, 0, 0, 180, 0], 'OutputDelay',[0, 120]);
+transmit.InputName={'Fh','Fc','Fd','Th','Tc','Td'};
+transmit.OutputName= 'y';
+% transmit.OutputName= {'V','T'};
