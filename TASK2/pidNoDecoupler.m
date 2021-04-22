@@ -46,7 +46,7 @@ Sum = sumblk('e = r - y',2);
 % CLry = connect(G,D,C_Fh,C_Fc,Sum1,'r1','V',Sum2,'r2','T');
 % CLry = connect(G,D,C_Fh,C_Fc,Sum1,Sum2,{'r1','r2'},{'V', 'T'});
 % CLry = connect(G,D,C_Fh,C_Fc,Sum,'r','y');
-CLry = connect(G,C_Fh,C_Fc,Sum,'r','y',{'Fh','Fc'}, 'u');
+CLry = connect(G,C_Fh,C_Fc,Sum,'r','y',{'Fh','Fc'});
 
 
 
