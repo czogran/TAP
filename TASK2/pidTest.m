@@ -18,7 +18,7 @@ CLry = connect(G,H,C,Sum,'r','y',{'Fh','Fc'});
 
 
 
-[y t x]=lsim(CLry, ones(2,10000).*[81;33.57],1:10000);
+[y t x]=lsim(CLry, ones(2,10000).*[V0;33.57],1:10000);
 
 figure
 plot(y(:,1))
