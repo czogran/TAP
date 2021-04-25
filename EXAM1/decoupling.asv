@@ -27,15 +27,11 @@ D21Delay= G21Dealay/G22Dealay;
 D11DelayClone =D21Delay;
 
 disp("--------------------------------------------------------------------")
-disp("D12=-G12/G11");
+disp("D12")
 D12
 s = 1;
 if length(zero(D12))>length(pole(D12))
     D12MessageRate=("DO MIANOWNIKA D12 Dodajemy inercję, o odpowiednio małej stałej czasowej (o rząd wielkości mniejszej od najmniejszej stałej czasowej)")
-end
-
-if find(pole(D12)<2)
-    D21MessageRate=("Z MIANOWNIKA D21 wywalamy ujemne")
 end
 
 if subs(D12Delay)> 1
@@ -44,15 +40,11 @@ end
 
 disp("--------------------------------------------------------------------")
 disp("--------------------------------------------------------------------")
-disp("D21=-G21/G22")
+disp("D21")
 D21
 
 if length(zero(D21))>length(pole(D21))
     D21MessageRate=("DO MIANOWNIKA D21 Dodajemy inercję, o odpowiednio małej stałej czasowej (o rząd wielkości mniejszej od najmniejszej stałej czasowej)")
-end
-
-if find(pole(D21)<2)
-    D21MessageRate=("Z MIANOWNIKA D21 wywalamy ujemne")
 end
 
 if subs(D21Delay)> 1
