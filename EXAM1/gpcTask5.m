@@ -19,6 +19,7 @@ b4=0;
 b5=0;
 b6=0;
 
+% start point for making vector available on relative negative indexes
 startPoint=10;
 
 N=3;

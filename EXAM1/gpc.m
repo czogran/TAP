@@ -4,6 +4,7 @@ close all
 clear all
 
 sympref('FloatingPointOutput',true)
+% uMin1 means-> u(k-1), uMin2-> u(k-2)....
 syms uMin [1,15]
 syms yMin [1,15]
 syms y0 

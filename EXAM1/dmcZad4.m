@@ -32,5 +32,4 @@ M= zeros(N*ny,Nu*nu);
 
 M=MMatrix(N,Nu,ny,nu,steps);
 
-
 H = 2*(M'*psi*M+lambda)
