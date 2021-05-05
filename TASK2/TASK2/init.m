@@ -59,3 +59,6 @@ t=0:Tp:10000;
 %DELAY
 delayT=120;
 delayC=180;
+delayC=0;
+delayT=0;
+ratio = 40;

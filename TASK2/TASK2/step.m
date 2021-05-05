@@ -93,10 +93,18 @@ for k=2:length(t)
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
-S(1, 1, :) = VVector(stepStart:stepStart+Dyn-1, 1);
-S(2, 1, :) = ToutputVector(stepStart:stepStart+Dyn-1, 1);
-S(1, 2, :) = VVector(stepStart:stepStart+Dyn-1, 2);
-S(2, 2, :) = ToutputVector(stepStart:stepStart+Dyn-1, 2);
+S(1, 1, :) = (VVector(stepStart:stepStart+Dyn-1, 1) - V0)/ratio;
+S(2, 1, :) = ToutputVector(stepStart:stepStart+Dyn-1, 1) - T0;
+S(1, 2, :) = (VVector(stepStart:stepStart+Dyn-1, 2) - V0)/ratio;
+S(2, 2, :) = ToutputVector(stepStart:stepStart+Dyn-1, 2) - T0;
+s11 = S(1, 1, :);
+s11 = s11(:);
+s21 = S(2, 1, :);
+s21 = s21(:);
+s12 = S(1, 2, :);
+s12 = s12(:);
+s22 = S(2, 2, :);
+s22 = s22(:);
 rkT = TVector;
 rkTout = ToutputVector;
 
