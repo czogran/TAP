@@ -1,31 +1,73 @@
+function E = MPCSEval(N, Nu, lambda, S, Yzad, FdVector)
 %%--SYMULACJA DZIAŁANIA OBIEKTU--%
 %Polecenie: Zasymulować działanie obiektu w Matlabie
 
 %init data and inports
-step
+Th=62;
+Fh=14;
+%Cold water
+Tc=23;
+Fc=37;
+%Discruption
+Td=33;
+Fd=12;
+
+Th0=62;
+Fh0=14;
+%Cold water
+Tc0=23;
+Fc0=37;
+%Discruption
+Td0=33;
+Fd0=12;
+
+a = 7;
+C0 = 0.7;
+Dyn = 1500;
+%OUTPUT
+Tout=0;
+F=0;
+
+h=81;
+h0=81;
+
+V0 = volume(h0);
+
+
+T=33.57143;
+T0 = T;
+%ADJUSTABLE SIZES
+% h;
+% Tout;
+
+%CONTROL VALUES
+% Fh;
+% Fcin-> Fc delayed;
+
+%VARIABLES
+% sample time
+Tp=1;
+t=0:Tp:10000;
+
+%DELAY
+delayT=120;
+delayC=180;
+ratio = 80;
+
+B = [1, 1, 1, 0, 0, 0; Th0/V0 - T0/V0, Tc0/V0 - T0/V0, Td0/V0 - T0/V0, Fh0/V0, Fc0/V0, Fd0/V0];
+A = [-a*0.25/(sqrt(sqrt((V0^3)*C0))), 0; Fh0*T0/(V0^2) + Fc0*T0/(V0^2) + Fd0*T0/(V0^2) - Fh0*Th0/(V0^2) - Fc0*Tc0/(V0^2) - Fd0*Td0/(V0^2), -(Fh0/V0 + Fc0/V0 + Fd0/V0)];
+C = [1, 0;0, 1];
 A = A + eye(size(A));
 B(1, :) = B(1,:)/ratio;
 B = B(1:2, 1:2);
-
-N = size(S);
-N = N(3);
-Nu = N;
-
-N = 1500;
-Nu = 1500;
-
-N = 1500;
-Nu = 1500;
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
 for i=2:Nu
     M(:,(i-1)*2+1:(i-1)*2+2)=[zeros((i-1)*2,2); M(1:(N-i+1)*2,1:2)];
 end
-dimM = size(M);
 
 psi = 1;
-lambda = 0.5;
 
 Psi = eye(N*2)*psi;
 Lambda = eye(Nu*2)*lambda;
@@ -61,7 +103,9 @@ for i = 1:N-1
 end
 V0 = V0/ratio;
 
-t = 1:1000;
+temp = size(Yzad);
+
+t = 1:temp(1);
 %% tank filling
 hVector=ones(length(t),1)*h0;
 
@@ -71,14 +115,17 @@ ToutputVector=TVector;
 
 T0 = 33.57143;
 
-Yzad = ones(length(t), 2).*[volume(70)/ratio, 40];
-
-
 Finputs=[Fh,Fc,Fd];
 Tinputs=[Th,Tc,Td];
 
 FinVector = ones(length(t), 3).*Finputs;
 TinVector = ones(length(t), 3).*Tinputs;
+
+if length(FdVector) == 1
+    FinVector(:, 3) = ones(temp(1), 1) * FdVector;
+else
+    FinVector(:, 3) = FdVector;
+end
 
 E = 0;
 
@@ -149,30 +196,4 @@ for k=2:length(t)
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
-rkT = TVector;
-rkTout = ToutputVector;
-
-rk = hVector;
-
-
-figure
-plot(t, rk, 'b')
-title("Napełnianie zbiornika" + newline + "symulacja metodą trzech różnych metod")
-legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
-xlabel("t[s]");
-ylabel("h[cm]")
-hold off
-
-figure
-plot(t,rkTout)
-title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą RK4")
-xlabel("t[s]");
-ylabel("T[\circC]")
-legend("temperatura w zbiorniku", "temperatura zlinearyzowana", 'Location','best')
-hold off
-
-figure
-plot(FinVector(:,1))
-
-figure
-plot(FinVector(:,2))
+end
