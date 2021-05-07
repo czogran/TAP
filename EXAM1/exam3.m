@@ -4,27 +4,28 @@ close all
 clear all
 
 sympref('FloatingPointOutput',true)
-% uMin1 means-> u(k-1), uMin2-> uk
+% uMin1 means-> u(k-1), uMin2-> u(k-2)....
 syms uMin [1,15]
+syms zMin [1,15]
 syms yMin [1,15]
 syms y0 
 syms y [1,15]
 syms yZad
 
-a=0.2676;
+a=0.5;
 % INDEXES FROM 1-> b0=b1
-b1=0;
+b1=0.2;
 b2=0;
-b3=0.1989;
-b4=0.2552;
+b3=0;
+b4=0;
 b5=0;
 b6=0;
 
 startPoint=10;
 
-N=4;
-Nu=2;
-lambda=0.1;
+N=3;
+Nu=1;
+lambda=0.2475;
 psi=1;
 
 yVector=cell(2*startPoint,1);
@@ -37,7 +38,8 @@ d=yVector{startPoint}-a*yVector{startPoint-1}-...
     b3*uMin(3)-...
     b4*uMin(4)-...
     b5*uMin(5)-...
-    b6*uMin(6);
+    b6*uMin(6) -...
+    0.1*uMin(1);
 
 index=1;
 for k=startPoint:startPoint+N
@@ -48,7 +50,8 @@ for k=startPoint:startPoint+N
         b3*uMin(max(1,3-index))+...
         b4*uMin(max(1,4-index))+...
         b5*uMin(max(1,5-index))+...
-        b6*uMin(max(1,6-index))+d;
+        b6*uMin(max(1,6-index))+d +...
+         0.1*zMin(max(1,1-index));
     
     index = index + 1;
 end
@@ -82,6 +85,8 @@ uMin13=0;    yMin13=0;
 uMin14=0;    yMin14=0; 
 uMin15=0;    yMin15=0; 
 
+zMin1=0;
+
 y0=0;
 y=0;
 
@@ -102,6 +107,7 @@ K1=K(1,:);
 
 
 law = 0;
+% CALCULATING LAW
 for i =1:N
     law= law+K1(i)*(yZad-stepResponsesN{i});
 end
