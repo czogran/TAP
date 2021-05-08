@@ -63,6 +63,8 @@ for ct=1:N
     uFhSatD=max(min(uFhSatDHelp,UB),LB);
     
     yD21=(uD21*uFhSat+u1D21*uVecD21(max(ct-1,1))-y1D21*yVecD21(max(ct-1,1)))/yD21;
+%     yD21=uFhSat*2.69;
+
     uFcSatDHelp=uFcSat+yD21;
     uFcSatD=max(min(uFcSatDHelp,UB),LB);
     
