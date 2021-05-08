@@ -59,4 +59,4 @@ t=0:Tp:10000;
 %DELAY
 delayT=120;
 delayC=180;
-ratio = 80;
+ratio = 100;

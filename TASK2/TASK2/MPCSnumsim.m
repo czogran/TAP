@@ -3,6 +3,11 @@
 
 %init data and inports
 step
+Umin = [0, 0];
+Umax = [50, 50];
+dUmin = [-0.2, -0.2];
+dUmax = [0.2, 0.2];
+
 sys = ss(A,B,C,D);
 sysDys = c2d(sys,1);
 A = sysDys.A;
@@ -15,8 +20,8 @@ N = N(3);
 Nu = N;
 
 
-N = 300;
-Nu = 100;
+N = 500;
+Nu = 80;
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
@@ -62,7 +67,7 @@ for i = 1:N-1
 end
 V0 = V0/ratio;
 
-t = 1:5000;
+t = 1:1000;
 %% tank filling
 hVector=ones(length(t),1)*h0;
 
@@ -72,7 +77,7 @@ ToutputVector=TVector;
 
 T0 = 33.57143;
 
-Yzad = ones(length(t), 2).*[volume(82)/ratio, 30];
+Yzad = ones(length(t), 2).*[volume(70)/ratio, 40];
 
 
 Finputs=[Fh,Fc,Fd];
@@ -104,10 +109,19 @@ for k=2:length(t)
     
     dU = Ke * (Yzad(k, :) - [V0, T0])' - acc;
     
+    dU(1) = max(dU(1), dUmin(1));
+    dU(2) = max(dU(2), dUmin(1));
+    
+    dU(1) = min(dU(1), dUmax(1));
+    dU(2) = min(dU(2), dUmax(1));
+    
     FinVector(k, 1:2) = dU + FinVector(k-1, 1:2)';
     
-    FinVector(k, 1) = max(FinVector(k, 1), 0); 
-    FinVector(k, 2) = max(FinVector(k, 2), 0);
+    FinVector(k, 1) = min(FinVector(k, 1), Umax(1)); 
+    FinVector(k, 2) = min(FinVector(k, 2), Umax(2));
+    
+    FinVector(k, 1) = max(FinVector(k, 1), Umin(1)); 
+    FinVector(k, 2) = max(FinVector(k, 2), Umin(2));
     
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);
@@ -147,27 +161,26 @@ for k=2:length(t)
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
-u1 = FinVector(:,1);
-u2 = FinVector(:,2);
-Yzad1 = heightFromVolume(Yzad(:, 1).*ratio);
-Yzad2 = Yzad(:, 2);
+rkT = TVector;
+rkTout = ToutputVector;
+
+rk = hVector;
+
 
 figure
-plot(t, hVector, 'b')
-hold on
-plot(t, Yzad1, 'LineStyle', '--')
-title("Napełnianie zbiornika")
+plot(t, rk, 'b')
+title("Napełnianie zbiornika" + newline + "symulacja metodą trzech różnych metod")
+legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
 xlabel("t[s]");
 ylabel("h[cm]")
 hold off
 
 figure
-plot(t,ToutputVector)
-hold on
-plot(t, Yzad2, 'LineStyle', '--')
-title("Tempteratura w zbiorniku")
+plot(t,rkTout)
+title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą RK4")
 xlabel("t[s]");
 ylabel("T[\circC]")
+legend("temperatura w zbiorniku", "temperatura zlinearyzowana", 'Location','best')
 hold off
 
 figure
