@@ -1,6 +1,4 @@
 function E = MPCSEval(params)
-%%--SYMULACJA DZIAŁANIA OBIEKTU--%
-%Polecenie: Zasymulować działanie obiektu w Matlabie
 global S
 global Yzad
 
@@ -154,8 +152,10 @@ for k=2:length(t)
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);
     
-    if(k<delayC)
+    if(k<=delayC)
         Fin = [Fin(1), Fc, Fin(3)];
+    else
+        Fin = [Fin(1), FinVector(k - delayC, 2), Fin(3)];
     end
     
     kV1= dVdt(heightFromVolume(V*ratio), delay, Fin);

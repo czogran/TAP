@@ -11,14 +11,13 @@ B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
 B = B(1:2, 1:2);
 
-
-N = 50;
+N = 100;
 Nu = 10;
 
-Umin=ones(Nu*2,1) * (-50);
-dUmin=ones(Nu*2,1) * (-1);
-Umax=ones(Nu*2,1) * 50;
-dUmax=ones(Nu*2,1) * (1);
+Umin=ones(Nu*2,1) * (-10);
+dUmin=ones(Nu*2,1) * (-0.5);
+Umax=ones(Nu*2,1) * 10;
+dUmax=ones(Nu*2,1) * (0.5);
 
 Ymin = ones(N*2,1) * (-20);
 Ymax = ones(N*2,1) * 20 ;
@@ -87,10 +86,10 @@ global Yzad
 
 Yzad = ones(length(t), 2);
 Yzad(1:2000, :) = Yzad(1:2000, :).*[volume(81)/ratio, 33.57];
-Yzad(2001:5000, :) = Yzad(2001:5000, :).*[volume(90)/ratio, 38];
-Yzad(5001:10000, :) = Yzad(5001:10000, :).*[volume(70)/ratio, 32];
-Yzad(10001:15000, :) = Yzad(10001:15000, :).*[volume(70)/ratio, 40];
-Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(75)/ratio, 36];
+Yzad(2001:5000, :) = Yzad(2001:5000, :).*[volume(82)/ratio, 35];
+Yzad(5001:10000, :) = Yzad(5001:10000, :).*[volume(79)/ratio, 35];
+Yzad(10001:15000, :) = Yzad(10001:15000, :).*[volume(75)/ratio, 30];
+Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(81)/ratio, 33];
 
 
 Finputs=[Fh,Fc,Fd];
@@ -106,8 +105,8 @@ Fin = Finputs;
 delay = 1;
 Tp = 1;
 dist = [0; 0];
-qdSet = optimoptions('quadprog','Display','off','MaxIterations', 500);
-H = 2 * (M'*Psi*M + Lambda);
+qdSet = optimoptions('quadprog','Display','off','MaxIterations', 500, 'OptimalityTolerance', 0.01, 'StepTolerance', 0.01);
+H = 2 * (M'*M + Lambda);
 J = zeros(2*Nu, 2*Nu);
 for i=1:Nu
     for j=1:i
@@ -142,8 +141,6 @@ for k=2:length(t)
     
     fqd = -2 * M' * Psi * (Yzadqd - y0);
     
-    y_min_res = -Ymin + y0;
-    y_max_res = Ymax - y0;
     bqd = [-Umin + UVector(:, k-1); Umax - UVector(:, k-1); -Ymin + y0; Ymax - y0];
     dU = quadprog(H, fqd, Aqd, bqd, [], [], dUmin, dUmax, dU, qdSet);   
     UVector(:,k) = UVector(:,k-1)+dU;
@@ -152,8 +149,10 @@ for k=2:length(t)
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);
     
-    if(k<delayC)
+    if(k<=delayC)
         Fin = [Fin(1), Fc, Fin(3)];
+    else
+        Fin = [Fin(1), FinVector(k - delayC, 2), Fin(3)];
     end
     
     kV1= dVdt(heightFromVolume(V*ratio), delay, Fin);

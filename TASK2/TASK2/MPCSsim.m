@@ -4,7 +4,7 @@
 %init data and inports
 step
 Umin = [0, 0];
-Umax = [50, 50];
+Umax = [100, 100];
 dUmin = [-0.2, -0.2];
 dUmax = [0.2, 0.2];
 
@@ -132,8 +132,10 @@ for k=2:length(t)
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);
     
-    if(k<delayC)
+    if(k<=delayC)
         Fin = [Fin(1), Fc, Fin(3)];
+    else
+        Fin = [Fin(1), FinVector(k - delayC, 2), Fin(3)];
     end
     
     kV1= dVdt(heightFromVolume(V*ratio), delay, Fin);
