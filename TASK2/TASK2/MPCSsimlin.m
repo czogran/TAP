@@ -111,10 +111,19 @@ for k=2:length(t)
     
     dU = Ke * (Yzad(k, :) - [V0, T0])' - acc;
     
+    dU(1) = max(dU(1), dUmin(1));
+    dU(2) = max(dU(2), dUmin(1));
+    
+    dU(1) = min(dU(1), dUmax(1));
+    dU(2) = min(dU(2), dUmax(1));
+    
     FinVector(k, 1:2) = dU + FinVector(k-1, 1:2)';
     
-    FinVector(k, 1) = max(FinVector(k, 1), 0); 
-    FinVector(k, 2) = max(FinVector(k, 2), 0);
+    FinVector(k, 1) = min(FinVector(k, 1), Umax(1)); 
+    FinVector(k, 2) = min(FinVector(k, 2), Umax(2));
+    
+    FinVector(k, 1) = max(FinVector(k, 1), Umin(1)); 
+    FinVector(k, 2) = max(FinVector(k, 2), Umin(2));
     
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);

@@ -3,10 +3,6 @@
 
 %init data and inports
 step
-Umin = [0, 0];
-Umax = [50, 50];
-dUmin = [-0.2, -0.2];
-dUmax = [0.2, 0.2];
 
 sys = ss(A,B,C,D);
 sysDys = c2d(sys,1);
@@ -15,13 +11,18 @@ B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
 B = B(1:2, 1:2);
 
-N = size(S);
-N = N(3);
-Nu = N;
 
+N = 50;
+Nu = 10;
 
-N = 300;
-Nu = 100;
+Umin=ones(Nu*2,1) * (-50);
+dUmin=ones(Nu*2,1) * (-1);
+Umax=ones(Nu*2,1) * 50;
+dUmax=ones(Nu*2,1) * (1);
+
+Ymin = ones(N*2,1) * (-20);
+Ymax = ones(N*2,1) * 20 ;
+
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
@@ -56,6 +57,11 @@ end
 
 Ke = [sum(K11), sum(K12); sum(K21), sum(K22)];
 
+Ap = [];
+for i=1:N
+    Ap = [Ap; A^i];
+end
+
 Vp = eye(size(A));
 
 for i = 1:N-1
@@ -84,7 +90,8 @@ Yzad(1:2000, :) = Yzad(1:2000, :).*[volume(81)/ratio, 33.57];
 Yzad(2001:5000, :) = Yzad(2001:5000, :).*[volume(90)/ratio, 38];
 Yzad(5001:10000, :) = Yzad(5001:10000, :).*[volume(70)/ratio, 32];
 Yzad(10001:15000, :) = Yzad(10001:15000, :).*[volume(70)/ratio, 40];
-Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(60)/ratio, 33];
+Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(75)/ratio, 36];
+
 
 Finputs=[Fh,Fc,Fd];
 Tinputs=[Th,Tc,Td];
@@ -99,6 +106,23 @@ Fin = Finputs;
 delay = 1;
 Tp = 1;
 dist = [0; 0];
+qdSet = optimoptions('quadprog','Display','off','MaxIterations', 500);
+H = 2 * (M'*Psi*M + Lambda);
+J = zeros(2*Nu, 2*Nu);
+for i=1:Nu
+    for j=1:i
+        J(2*(j - 1) + 1, 2*(i-1) + 1) = 1;
+        J(2*j, 2*i) = 1;
+    end
+end
+J = J';
+
+Aqd = [-J;J;-M;M];
+dU = zeros(1,Nu*2);
+UVector = zeros(Nu*2, length(t));
+
+
+Cp = eye(N*2, N*2);
 % rungy-kutta
 for k=2:length(t)
     
@@ -106,28 +130,24 @@ for k=2:length(t)
     Tout = ToutputVector(k-1);
     T = TVector(k-1);
     
-    acc = [0; 0];
+    y0 = zeros(N*2, 1);
     
-    for i = 1:N
-        acc = acc + K1(:, 2*i-1:2*i)*(C*((A^i)*[V - V0;Tout - T0]) + C*(Vp(2*i -1: 2*i, :))*(B*(FinVector(k-1, 1:2) - [Fh,Fc])') + dist);
+    Yzadqd = zeros(N*2,1);
+    for i=2:2:2*N
+       Yzadqd(i-1) = Yzad(min(length(t), k-1+i/2), 1) - V0;
+       Yzadqd(i) = Yzad(min(length(t), k-1+i/2), 2) - T0;
     end
     
+    y0 = Cp*Ap*[V - V0;Tout - T0] + Cp*Vp*(B*((FinVector(k-1, 1:2) - [Fh,Fc])') + dist);
     
-    dU = Ke * (Yzad(k, :) - [V0, T0])' - acc;
+    fqd = -2 * M' * Psi * (Yzadqd - y0);
     
-    dU(1) = max(dU(1), dUmin(1));
-    dU(2) = max(dU(2), dUmin(1));
-    
-    dU(1) = min(dU(1), dUmax(1));
-    dU(2) = min(dU(2), dUmax(1));
-    
-    FinVector(k, 1:2) = dU + FinVector(k-1, 1:2)';
-    
-    FinVector(k, 1) = min(FinVector(k, 1), Umax(1)); 
-    FinVector(k, 2) = min(FinVector(k, 2), Umax(2));
-    
-    FinVector(k, 1) = max(FinVector(k, 1), Umin(1)); 
-    FinVector(k, 2) = max(FinVector(k, 2), Umin(2));
+    y_min_res = -Ymin + y0;
+    y_max_res = Ymax - y0;
+    bqd = [-Umin + UVector(:, k-1); Umax - UVector(:, k-1); -Ymin + y0; Ymax - y0];
+    dU = quadprog(H, fqd, Aqd, bqd, [], [], dUmin, dUmax, dU, qdSet);   
+    UVector(:,k) = UVector(:,k-1)+dU;
+    FinVector(k, 1:2) = dU(1:2) + FinVector(k-1, 1:2)';
     
     Fin = FinVector(k, :);
     Tin = TinVector(k, :);
