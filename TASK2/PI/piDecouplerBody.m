@@ -23,6 +23,10 @@ errorT=0;
 
 
 for ct=1:N
+    % setup disturbance     
+    FdInput = FdVector(ct);
+    TdInput = TdVector(ct);
+    
     % error
     e = rVector(ct,:) - y;
     errorH=errorH+e(1)^2;
@@ -110,6 +114,8 @@ yVec = yVec(1:N,:);
 uVecFh= uVecFh(1:N);
 uVecFcin= uVecFcin(1:N);
 uVecFc= uVecFc(1:N);
+uVecD12=uVecD12(1:N);
+uVecD21=uVecD21(1:N);
 
 
 heightFigure=figure;
@@ -156,7 +162,7 @@ ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
 
 
-caption="Wykresy dla regulatora PI z odsprzeganiem";
+caption="Wykresy dla regulatora PI z odsprzeganiem.";
 label="fig:PIDecoupler"+index;
 
 heightName="PIDecouplerH"+index;
@@ -164,4 +170,29 @@ tempName="PIDecouplerT"+index;
 controlPIName="PIDecouplerControl"+index;
 controlDecouplerName="PIDecouplerControlD"+index;
 
+if ~disturbance
 saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure,controlDecouplerFigure], path,[heightName,tempName,controlPIName, controlDecouplerName],fileName,overLeafFilePath,caption,label);
+else
+    disturbanceFigure=figure
+    subplot(2,1,1)
+    plot(FdVector)
+    title("Zakłócenie Fd")
+    xlabel("t[s]")
+    ylabel("Fd[$\frac{cm^3}{s}$]",'Interpreter','latex')
+    subplot(2,1,2)
+    plot(TdVector)
+    title("Zakłócenie Td")
+    xlabel("t[s]")
+    ylabel("Td[\circC]")
+    hold off
+    sgtitle("Wartość zakłoceń")
+   
+    hold off
+
+
+    caption="Wykresy dla regulatora PI z odsprzeganiem dla różnych wartości zakłóceń";
+    label="fig:PIDecoupler"+index;  
+    controlDistubanceName="PIDecouplerDisturbance"+index;
+    saveFiguresInColumn([heightFigure,tempFigure,controlDecouplerFigure, disturbanceFigure], path,[heightName,tempName, controlDecouplerName, controlDistubanceName],fileName,overLeafFilePath,caption,label);
+end
+

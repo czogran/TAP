@@ -3,7 +3,7 @@ init
 
 % CONFIG
 % decoupler
-useDecoupler =false;
+useDecoupler =true;
 % disturbance
 disturbance = false;
 % use linear object model
@@ -74,8 +74,8 @@ if disturbance
     rTd3=ones(interval,1)*(Td0-10);
     
     % arrays with disturbance, must be same length     
-    rFdArray={[rFd1 ;rFd2 ;rFd3] [rFd1; rFd1; rFd1]};
-    rTdArray={[rTd1 ;rTd1 ;rTd1] [rTd1; rTd2 ;rTd3]};
+    rFdArray={[rFd1 rFd2 rFd3] [rFd1 rFd1 rFd1]};
+    rTdArray={[rTd1 rTd1 rTd1] [rTd1 rTd2 rTd3]};
 else
     overLeafFilePath=overLeafFilePath+"noDisturbance/";
     path=path+"noDisturbance/";
@@ -103,23 +103,23 @@ elseif disturbance
      index=1;
     for i =1: length(rFdArray)
         FdVector = rFdArray{i};
-        TdVector = rTdArray{i};
+        TdVector = rFdArray{i};
         rVector=rWorkPoint;
         if useDecoupler
             piDecouplerBody;
         else
-            piNoDecouplerBody;
+            piNoDecouplerBody
         end
         index=index+1;
     end
 else
     index=1;
     for i =1: length(rArray)
-        rVector = rArray{i};
+        rVector = rArray{i}
         if useDecoupler
             piDecouplerBody;
         else
-            piNoDecouplerBody;
+            piNoDecouplerBody
         end
         index=index+1;
     end

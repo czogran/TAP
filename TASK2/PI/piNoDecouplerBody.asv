@@ -71,9 +71,9 @@ for ct=1:N
     T=y(2);
     
     if(useLinearModel)
-        linearTRk4;
-    else
         noLinearTRk4;
+    else
+        linearTRk4;
     end
     
     dT=Ts/6*(kT1+2*kT2+2*kT3+kT4);
@@ -121,38 +121,12 @@ xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
 
-caption="Wykresy dla regulatora PI bez odsprzegania.";
+caption="Wykresy dla regulatora PI bez odsprzegania. "+extraCaption;
 label="fig:PINodDecoupler"+index;
 
 heightName="PINoDecouplerH"+index;
 tempName="PINoDecouplerT"+index;
 controlPIName="PINoDecouplerControl"+index;
 
-
-if ~disturbance
 saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], path,[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
-else
-    disturbanceFigure=figure
-    subplot(2,1,1)
-    plot(FdVector)
-    title("Zakłócenie Fd")
-    xlabel("t[s]")
-    ylabel("Fd[$\frac{cm^3}{s}$]",'Interpreter','latex')
-    subplot(2,1,2)
-    plot(TdVector)
-    title("Zakłócenie Td")
-    xlabel("t[s]")
-    ylabel("Td[\circC]")
-    hold off
-    sgtitle("Wartość zakłoceń")
-   
-    hold off
 
-
-    caption="Wykresy dla regulatora PI bez odsprzegania dla różnych wartości zakłóceń";
-    label="fig:PIDecoupler"+index;  
-    
-    controlDistubanceName="PIDecouplerDisturbance"+index;
-    
-    saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure,disturbanceFigure], path,[heightName,tempName,controlPIName,controlDistubanceName],fileName,overLeafFilePath,caption,label);
-end
