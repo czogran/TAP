@@ -20,8 +20,8 @@ N = N(3);
 Nu = N;
 
 
-N = 500;
-Nu = 80;
+N = 300;
+Nu = 100;
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
@@ -67,7 +67,7 @@ for i = 1:N-1
 end
 V0 = V0/ratio;
 
-t = 1:1000;
+t = 1:20000;
 %% tank filling
 hVector=ones(length(t),1)*h0;
 
@@ -77,8 +77,14 @@ ToutputVector=TVector;
 
 T0 = 33.57143;
 
-Yzad = ones(length(t), 2).*[volume(70)/ratio, 40];
+global Yzad
 
+Yzad = ones(length(t), 2);
+Yzad(1:2000, :) = Yzad(1:2000, :).*[volume(81)/ratio, 33.57];
+Yzad(2001:5000, :) = Yzad(2001:5000, :).*[volume(90)/ratio, 38];
+Yzad(5001:10000, :) = Yzad(5001:10000, :).*[volume(70)/ratio, 32];
+Yzad(10001:15000, :) = Yzad(10001:15000, :).*[volume(70)/ratio, 40];
+Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(60)/ratio, 33];
 
 Finputs=[Fh,Fc,Fd];
 Tinputs=[Th,Tc,Td];
@@ -155,32 +161,33 @@ for k=2:length(t)
     end
     
     %d = [VVector(k); ToutputVector(k)] - (A*[V;Tout] + B*[Fin, Tin]');
-    dist = [VVector(k); ToutputVector(max(k, 1))] - (A*[V;ToutputVector(max(k - 1, 1))] + B*FinVector(max(k - 1, 1), 1:2)');
+    dist = [VVector(k) - V0; ToutputVector(max(k, 1)) - T0] - (A*[V - V0;ToutputVector(max(k - 1, 1)) - T0] + B*(FinVector(max(k - 1, 1), 1:2)' - [Fh; Fc]));
     
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
-rkT = TVector;
-rkTout = ToutputVector;
-
-rk = hVector;
-
+u1 = FinVector(:,1);
+u2 = FinVector(:,2);
+Yzad1 = heightFromVolume(Yzad(:, 1).*ratio);
+Yzad2 = Yzad(:, 2);
 
 figure
-plot(t, rk, 'b')
-title("Napełnianie zbiornika" + newline + "symulacja metodą trzech różnych metod")
-legend("zwykła metoda Eulera", "zmodyfikowana metoda Eulera", "metoda Rungego Kutty", 'Location', 'best');
+plot(t, hVector, 'b')
+hold on
+plot(t, Yzad1, 'LineStyle', '--')
+title("Napełnianie zbiornika")
 xlabel("t[s]");
 ylabel("h[cm]")
 hold off
 
 figure
-plot(t,rkTout)
-title("Napełnianie zbiornika" + newline+"tempteratura"+newline + "symulacja metodą RK4")
+plot(t,ToutputVector)
+hold on
+plot(t, Yzad2, 'LineStyle', '--')
+title("Tempteratura w zbiorniku")
 xlabel("t[s]");
 ylabel("T[\circC]")
-legend("temperatura w zbiorniku", "temperatura zlinearyzowana", 'Location','best')
 hold off
 
 figure
@@ -188,3 +195,9 @@ plot(FinVector(:,1))
 
 figure
 plot(FinVector(:,2))
+
+
+
+
+
+

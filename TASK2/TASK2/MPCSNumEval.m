@@ -1,7 +1,5 @@
 function E = MPCSNumEval(N, Nu, lambda, S, Yzad, FdVector, Umin, Umax, dUmin, dUmax)
-%%--SYMULACJA DZIAŁANIA OBIEKTU--%
-%Polecenie: Zasymulować działanie obiektu w Matlabie
-
+%%NIE PATRZ NA TO ZEPSUTY PLIK
 %init data and inports
 Th=62;
 Fh=14;
@@ -196,7 +194,7 @@ for k=2:length(t)
     end
     
     %d = [VVector(k); ToutputVector(k)] - (A*[V;Tout] + B*[Fin, Tin]');
-    dist = [VVector(k); ToutputVector(max(k, 1))] - (A*[V;ToutputVector(max(k, 1))] + B*[Fin(1), FinVector(max(k - 1, 1), 2)]');
+    dist = [VVector(k) - V0; ToutputVector(max(k, 1)) - T0] - (A*[V - V0;ToutputVector(max(k - 1, 1)) - T0] + B*(FinVector(max(k - 1, 1), 1:2)' - [Fh; Fc]));
     
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);

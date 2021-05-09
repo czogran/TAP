@@ -2,7 +2,8 @@ init
 a=7;
 C0=0.7;
 
-Dyn = 1500;
+Dyn = 1862;
+global S
 S = zeros(2, 2, Dyn);
 
 % sampe time

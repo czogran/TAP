@@ -8,6 +8,7 @@ sysDys = c2d(sys,1);
 A = sysDys.A;
 B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
+Bmod = B;
 B = B(1:2, 1:2);
 
 N = size(S);
@@ -62,7 +63,7 @@ for i = 1:N-1
 end
 V0 = V0/ratio;
 
-t = 1:2000;
+t = 1:20000;
 %% tank filling
 hVector=ones(length(t),1)*h0;
 
@@ -72,10 +73,14 @@ ToutputVector=TVector;
 
 T0 = 33.57143;
 
-Yzad = ones(length(t), 2).*[volume(81)/ratio, 33];
-Yzad(2000:5000, :) = [volume(90)/ratio, 38];
-Yzad(5000:10000, :) = [volume(70)/ratio, 32];
-Yzad(10000:15000, :) = [volume(0)/ratio, 38];
+global Yzad
+
+Yzad = ones(length(t), 2);
+Yzad(1:2000, :) = Yzad(1:2000, :).*[volume(81)/ratio, 33];
+Yzad(2001:5000, :) = Yzad(2001:5000, :).*[volume(90)/ratio, 38];
+Yzad(5001:10000, :) = Yzad(5001:10000, :).*[volume(70)/ratio, 32];
+Yzad(10001:15000, :) = Yzad(10001:15000, :).*[volume(70)/ratio, 40];
+Yzad(15001:20000, :) = Yzad(15001:20000, :).*[volume(60)/ratio, 33];
 
 Finputs=[Fh,Fc,Fd];
 Tinputs=[Th,Tc,Td];
@@ -129,13 +134,13 @@ for k=2:length(t)
     kT4= dTdt(V*ratio + Tp*kV3,T + Tp*kT3,delay,Fin,Tin);
    
     dV=Tp/6*(kV1+2*kV2+2*kV3+kV4)/ratio;
-    VVector(k)=V+dV;
+    nxt = A * [V; T] + Bmod * [Fin, Tin]';
+    VVector(k) = nxt(1) + Vconst/ratio;
+    TVector(k) = nxt(2);
 
-    
-    dT=Tp/6*(kT1+2*kT2+2*kT3+kT4);   
     hVector(k)=heightFromVolume(VVector(k)*ratio);
     %dT=dTdt(V(k),T,delayFc,Finputs,Tinputs);
-    TVector(k)=TVector(k-1)+dT;
+    %TVector(k)=TVector(k-1)+dT;
     if(k<=delayT)
         ToutputVector(k)=T0;
     else
@@ -143,7 +148,7 @@ for k=2:length(t)
     end
     
     %d = [VVector(k); ToutputVector(k)] - (A*[V;Tout] + B*[Fin, Tin]');
-    dist = [VVector(k); ToutputVector(max(k, 1))] - (A*[V;ToutputVector(max(k - 1, 1))] + B*FinVector(max(k - 1, 1), 1:2)');
+    dist = [VVector(k) - V0; ToutputVector(max(k, 1)) - T0] - (A*[V - V0;ToutputVector(max(k - 1, 1)) - T0] + B*(FinVector(max(k - 1, 1), 1:2)' - [Fh; Fc]));
     
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);

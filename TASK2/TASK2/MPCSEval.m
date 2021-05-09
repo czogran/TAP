@@ -1,6 +1,12 @@
-function E = MPCSEval(N, Nu, lambda, S, Yzad, FdVector)
+function E = MPCSEval(params)
 %%--SYMULACJA DZIAŁANIA OBIEKTU--%
 %Polecenie: Zasymulować działanie obiektu w Matlabie
+global S
+global Yzad
+
+N = floor(params(1));
+Nu = floor(params(2));
+lambda = params(3);
 
 %init data and inports
 Th=62;
@@ -23,11 +29,8 @@ Fd0=12;
 
 a = 7;
 C0 = 0.7;
-Dyn = 1500;
+Dyn = 1862;
 %OUTPUT
-Tout=0;
-F=0;
-
 h=81;
 h0=81;
 
@@ -36,28 +39,21 @@ V0 = volume(h0);
 
 T=33.57143;
 T0 = T;
-%ADJUSTABLE SIZES
-% h;
-% Tout;
-
-%CONTROL VALUES
-% Fh;
-% Fcin-> Fc delayed;
-
-%VARIABLES
-% sample time
 Tp=1;
-t=0:Tp:10000;
 
 %DELAY
 delayT=120;
 delayC=180;
-ratio = 80;
+ratio = 100;
 
 B = [1, 1, 1, 0, 0, 0; Th0/V0 - T0/V0, Tc0/V0 - T0/V0, Td0/V0 - T0/V0, Fh0/V0, Fc0/V0, Fd0/V0];
 A = [-a*0.25/(sqrt(sqrt((V0^3)*C0))), 0; Fh0*T0/(V0^2) + Fc0*T0/(V0^2) + Fd0*T0/(V0^2) - Fh0*Th0/(V0^2) - Fc0*Tc0/(V0^2) - Fd0*Td0/(V0^2), -(Fh0/V0 + Fc0/V0 + Fd0/V0)];
 C = [1, 0;0, 1];
-A = A + eye(size(A));
+D = [0, 0, 0, 0, 0, 0; 0, 0, 0, 0 ,0 , 0];
+sys = ss(A,B,C,D);
+sysDys = c2d(sys,1);
+A = sysDys.A;
+B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
 B = B(1:2, 1:2);
 
@@ -73,7 +69,7 @@ Psi = eye(N*2)*psi;
 Lambda = eye(Nu*2)*lambda;
 
 %Macierz K
-K=((M'*Psi*M+Lambda)^(-1))*M';
+K=((M'*Psi*M+Lambda)^(-1))*M'*Psi;
 dimK = size(K);
 
 K1 = K(1:2, :);
@@ -121,13 +117,13 @@ Tinputs=[Th,Tc,Td];
 FinVector = ones(length(t), 3).*Finputs;
 TinVector = ones(length(t), 3).*Tinputs;
 
-if length(FdVector) == 1
-    FinVector(:, 3) = ones(temp(1), 1) * FdVector;
-else
-    FinVector(:, 3) = FdVector;
-end
+FinVector(:, 3) = ones(temp(1), 1) * Fd;
+
 
 E = 0;
+
+FinVector = ones(length(t), 3).*Finputs;
+TinVector = ones(length(t), 3).*Tinputs;
 
 Tin = Tinputs;
 Fin = Finputs;
@@ -151,9 +147,6 @@ for k=2:length(t)
     dU = Ke * (Yzad(k, :) - [V0, T0])' - acc;
     
     FinVector(k, 1:2) = dU + FinVector(k-1, 1:2)';
-    
-    FinVector(k, 1) = min(FinVector(k, 1), 100); 
-    FinVector(k, 2) = min(FinVector(k, 2), 100);
     
     FinVector(k, 1) = max(FinVector(k, 1), 0); 
     FinVector(k, 2) = max(FinVector(k, 2), 0);
@@ -190,10 +183,9 @@ for k=2:length(t)
     end
     
     %d = [VVector(k); ToutputVector(k)] - (A*[V;Tout] + B*[Fin, Tin]');
-    dist = [VVector(k); ToutputVector(max(k, 1))] - (A*[V;ToutputVector(max(k, 1))] + B*[Fin(1), FinVector(max(k - 1, 1), 2)]');
+    dist = [VVector(k) - V0; ToutputVector(max(k, 1)) - T0] - (A*[V - V0;ToutputVector(max(k - 1, 1)) - T0] + B*(FinVector(max(k - 1, 1), 1:2)' - [Fh; Fc]));
     
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
-%     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
 end
