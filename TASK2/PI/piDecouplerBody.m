@@ -1,67 +1,39 @@
-% PI regulator
-transferModelNoDelays;
-
-UseBackCalculation = true; % enable/disable anti-windup (back calculation)
-G=tf(transmit);
-KpFh = 15; KiFh = 1.5; % PI controller gains (parallel)
-KpFc = 0; KiFc = -0.04; % PI controller gains (parallel)
-
-Ts = 0.01; % controller sample time
-tau = 1; % reset time constant
-UB = 300; LB = 0; % saturation limits
-
-% closed-loop simulation (200 steps)
-N = 18000;
-
-% initial condition
-interval=N/6;
-r1 = ones(interval,2).*[h0, T0];
-r2=ones(interval,2).*[h0-10, T0];
-r3=ones(interval,2).*[h0+10, T0];
-r4=ones(interval,2).*[h0,T0-10];
-r5=ones(interval,2).*[h0,T0+10];
-r6=ones(interval,2).*[h0+10,T0-10];
-rVector=[r1;r1;r1;r6;r6;r6];
+% PI regulator body with no linear object  and decoupler
 
 % vector and values pre allocation
 y = [0,0];
 
 offset=max(delayC,delayT);
-yVec = zeros(N+offset,2);
-uVecFh= zeros(N+offset,1);
-uVecFc= zeros(N+offset,2);
-uVecFcin= zeros(N+offset,2);
+yVec = ones(N+offset,2).*[V0, T0]*initFactor;
+uVecFh= ones(N+offset,1)*Fh0*initFactor;
+uVecFc= ones(N+offset,1)*Fc0*initFactor;
+uVecFcin= ones(N+offset,1)*Fc0*initFactor;
 
-uVecD21= zeros(N+offset,1);
-yVecD21= zeros(N+offset,2);
+uVecD21= ones(N+offset,1)*2.69*Fh*initFactor;
+yVecD21= ones(N+offset,1)*Fh*initFactor;
 
-uVecD12= zeros(N+offset,1);
-yVecD12= zeros(N+offset,2);
+uVecD12= ones(N+offset,1)*Fc0*0*initFactor;
+yVecD12= ones(N+offset,1)*Fc0*initFactor;
 
 actionIFh = 0;
 actionIFc = 0;
 
-errroH=0;
-errocT=0;
+errorH=0;
+errorT=0;
 
-% Decoupler
-yD21=0.002301;
-y1D21=7.897e-6;
-uD21=0.00619;
-u1D21=2.122e-5;
 
 for ct=1:N
     % error
     e = rVector(ct,:) - y;
-    errorH=e(1)^2;
-    errorT=e(2)^2;
+    errorH=errorH+e(1)^2;
+    errorT=errorT+e(2)^2;
     
     % control action
     actionPFh = KpFh*e(1);
     actionPFc = KpFc*e(2);
 
-    uFh = [actionPFh + actionIFh];
-    uFc = [actionPFc + actionIFc];
+    uFh = actionPFh + actionIFh;
+    uFc = actionPFc + actionIFc;
 
     % saturation control action
     uFhSat = max(min(uFh,UB),LB);
@@ -81,14 +53,15 @@ for ct=1:N
     uFhSatDHelp=uFhSat+yD12;
     uFhSatD=max(min(uFhSatDHelp,UB),LB);
     
-    yD21=(uD21*uFhSat+u1D21*uVecD21(max(ct-1,1))-y1D21*yVecD21(max(ct-1,1)))/yD21;
-    yD21=uFhSat*2.69;
+    yD21=(uD21Const*uFhSat+u1D21Const*uVecD21(max(ct-1,1))-y1D21Const*yVecD21(max(ct-1,1)))/yD21Const;
+%     yD21=uFhSat*2.69;
+
     uFcSatDHelp=uFcSat+yD21;
     uFcSatD=max(min(uFcSatDHelp,UB),LB);
 
     uVecFh(ct) = uFhSatD;
     uVecFc(ct+delayC/Ts) = uFcSatD;
-    uVecFcin(ct) = 100;
+    uVecFcin(ct) = uFcSatD;
     
     uVecD21(ct)= uFhSat;
     yVecD21(ct)=yD21;
@@ -104,10 +77,11 @@ for ct=1:N
     
     delay=1;
  
-    kV1= dVdt(heightFromVolume(V), delay, Finputs);
-    kV2= dVdt(heightFromVolume(V + Ts/2*kV1),delay,Finputs);
-    kV3= dVdt(heightFromVolume(V + Ts/2*kV2),delay,Finputs);
-    kV4= dVdt(heightFromVolume(V + Ts*kV3),delay,Finputs);
+    if useLinearModel
+        linearVRk4;
+    else
+        noLinearVRk4;
+    end
     
     dV=Ts/6*(kV1+2*kV2+2*kV3+kV4);
     V=V+dV;
@@ -115,10 +89,12 @@ for ct=1:N
     y(1)=heightFromVolume(V);
             
     T=y(2);
-    kT1= dTdt(V,T,delay,Finputs,Tinputs);
-    kT2= dTdt(V + Ts*V/2,T + Ts/2*kT1,delay,Finputs,Tinputs);
-    kT3= dTdt(V + Ts*V/2,T + Ts/2*kT2,delay,Finputs,Tinputs);
-    kT4= dTdt(V + Ts*V,T + Ts*kT3,delay,Finputs,Tinputs);       
+    
+    if(useLinearModel)
+        linearTRk4;
+    else
+        noLinearTRk4;
+    end
     
     dT=Ts/6*(kT1+2*kT2+2*kT3+kT4);
     %  output T   
@@ -133,10 +109,10 @@ end
 yVec = yVec(1:N,:);
 uVecFh= uVecFh(1:N);
 uVecFcin= uVecFcin(1:N);
+uVecFc= uVecFc(1:N);
 
 
-clf;
-figure(1);
+heightFigure=figure;
 plot(1:N,yVec(:,1),'r');
 hold on
 plot(rVector(:,1),'--b');
@@ -147,7 +123,7 @@ ylabel("h[cm]")
 legend("h[cm]", "trajektoria zadana", 'Location','best')
 hold off
 
-figure(2);
+tempFigure=figure;
 plot(1:N,yVec(:,2),'.r');
 hold on
 plot(rVector(:,2),'--b');
@@ -156,10 +132,10 @@ xlabel('t[s]'); ylabel('T[\circC]');
 legend('temperatura [\circC]','trajektoria zadana', 'Location','best')
 hold off
 
-figure
-plot(uVecFh,'--r')
+controlPIFigure=figure
+plot(uVecFh,'r')
 hold on
-plot(uVecFcin,'--g')
+plot(uVecFcin,'g')
 title("u")
 title("Regulator PI z odsprzęganiem"+newline+"sterowanie wejściowe obiektu"+newline+"sterowanie u");
 legend("Fh","Fcin", 'Location','best')
@@ -168,13 +144,24 @@ ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
 
 
-figure
-plot(uVecD21,'--r')
+controlDecouplerFigure=figure
+plot(uVecD21,'r')
 hold on
-plot(uVecD12,'--g')
+plot(uVecD12,'g')
 title("u")
 title("Regulator PI z odsprzęganiem"+newline+"sterowanie wyjściowe regulatorów"+newline+"sterowanie u");
 legend("PI 1","PI 2", 'Location','best')
 xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
+
+
+caption="Wykresy dla regulatora PI z odsprzeganiem";
+label="fig:PIDecoupler"+index;
+
+heightName="PIDecouplerH"+index;
+tempName="PIDecouplerT"+index;
+controlPIName="PIDecouplerControl"+index;
+controlDecouplerName="PIDecouplerControlD"+index;
+
+saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure,controlDecouplerFigure], path,[heightName,tempName,controlPIName, controlDecouplerName],fileName,overLeafFilePath,caption,label);

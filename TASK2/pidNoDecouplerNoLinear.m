@@ -21,7 +21,7 @@ r3=ones(interval,2).*[h0+10, T0];
 r4=ones(interval,2).*[h0,T0-10];
 r5=ones(interval,2).*[h0,T0+10];
 r6=ones(interval,2).*[h0+10,T0-5];
-rVector=[r1;r1;r1;r6;r6;r6];
+rVector=[r1;r1;r1;r5;r5;r5];
 
 % vector and values pre allocation
 y = [0,0];

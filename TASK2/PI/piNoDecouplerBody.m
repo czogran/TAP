@@ -4,10 +4,10 @@
 y = [0,0];
 
 offset=max(delayC,delayT);
-yVec = zeros(N+offset,2);
-uVecFh= zeros(N+offset,1);
-uVecFc= zeros(N+offset,2);
-uVecFcin= zeros(N+offset,2);
+yVec = ones(N+offset,2).*[V0, T0].*initFactor;
+uVecFh= ones(N+offset,1)*Fh0*initFactor;
+uVecFc= ones(N+offset,1)*Fc0*initFactor;
+uVecFcin= ones(N+offset,1)*Fc0*initFactor;
 
 actionIFh = 0;
 actionIFc = 0;
@@ -30,8 +30,8 @@ for ct=1:N
     actionPFh = KpFh*e(1);
     actionPFc = KpFc*e(2);
 
-    uFh = [actionPFh + actionIFh];
-    uFc = [actionPFc + actionIFc];
+    uFh = actionPFh + actionIFh;
+    uFc = actionPFc + actionIFc;
 
     % saturation control action
     uFhSat = max(min(uFh,UB),LB);
@@ -57,10 +57,11 @@ for ct=1:N
     
     delay=1;
  
-    kV1= dVdt(heightFromVolume(V), delay, Finputs);
-    kV2= dVdt(heightFromVolume(V + Ts/2*kV1),delay,Finputs);
-    kV3= dVdt(heightFromVolume(V + Ts/2*kV2),delay,Finputs);
-    kV4= dVdt(heightFromVolume(V + Ts*kV3),delay,Finputs);
+    if useLinearModel
+        linearVRk4;
+    else
+        noLinearVRk4;
+    end
     
     dV=Ts/6*(kV1+2*kV2+2*kV3+kV4);
     V=V+dV;
@@ -68,10 +69,12 @@ for ct=1:N
     y(1)=heightFromVolume(V);
             
     T=y(2);
-    kT1= dTdt(V,T,delay,Finputs,Tinputs);
-    kT2= dTdt(V + Ts*V/2,T + Ts/2*kT1,delay,Finputs,Tinputs);
-    kT3= dTdt(V + Ts*V/2,T + Ts/2*kT2,delay,Finputs,Tinputs);
-    kT4= dTdt(V + Ts*V,T + Ts*kT3,delay,Finputs,Tinputs);       
+    
+    if(useLinearModel)
+        noLinearTRk4;
+    else
+        linearTRk4;
+    end
     
     dT=Ts/6*(kT1+2*kT2+2*kT3+kT4);
     %  output T   
@@ -87,8 +90,7 @@ yVec = yVec(1:N,:);
 uVecFh= uVecFh(1:N);
 uVecFcin= uVecFc(1:N);
 
-clf;
-figure(1);
+heightFigure=figure;
 plot(1:N,yVec(:,1),'r');
 hold on
 plot(rVector(:,1),'--b');
@@ -99,7 +101,7 @@ ylabel("h[cm]")
 legend("h[cm]", "trajektoria zadana", 'Location','best')
 hold off
 
-figure(2);
+tempFigure=figure;
 plot(1:N,yVec(:,2),'.r');
 hold on
 plot(rVector(:,2),'--b');
@@ -108,13 +110,23 @@ xlabel('t[s]'); ylabel('T[\circC]');
 legend('temperatura [\circC]','trajektoria zadana', 'Location','best')
 hold off
 
-figure
-plot(uVecFh,'--r')
+controlPIFigure=figure
+plot(uVecFh,'r')
 hold on
-plot(uVecFcin,'--g')
+plot(uVecFcin,'g')
 title("u")
 title("Regulator PI bez odsprzęgania"+newline+"sterowanie u");
 legend("Fh","Fcin", 'Location','best')
 xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
+
+caption="Wykresy dla regulatora PI bez odsprzegania";
+label="fig:PINodDecoupler"+index;
+
+heightName="PINoDecouplerH"+index;
+tempName="PINoDecouplerT"+index;
+controlPIName="PINoDecouplerControl"+index;
+
+saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], path,[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
+

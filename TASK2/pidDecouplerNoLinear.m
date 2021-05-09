@@ -1,14 +1,13 @@
 % PI regulator
-transferModelNoDelays;
+init
 
 UseBackCalculation = true; % enable/disable anti-windup (back calculation)
-G=tf(transmit);
-KpFh = 0.01; KiFh = 0.075; % PI controller gains (parallel)
-KpFc = -0.5; KiFc = -0.002; % PI controller gains (parallel)
+KpFh = 0.04; KiFh = 0.0004; % PI controller gains (parallel)
+KpFc = 40000; KiFc = -100000; % PI controller gains (parallel)
 
 Ts = Tp; % controller sample time
 tau = 1; % reset time constant
-UB = 300; LB = 0; % saturation limits
+UB = 1500; LB = 0; % saturation limits
 
 % closed-loop simulation (200 steps)
 N = 18000;
@@ -19,9 +18,9 @@ r1 = ones(interval,2).*[h0, T0];
 r2=ones(interval,2).*[h0-10, T0];
 r3=ones(interval,2).*[h0+10, T0];
 r4=ones(interval,2).*[h0,T0-10];
-r5=ones(interval,2).*[h0,T0+10];
+r5=ones(interval,2).*[h0,T0+5];
 r6=ones(interval,2).*[h0+10,T0-5];
-rVector=[r1;r1;r1;r6;r6;r6];
+rVector=[r1;r1;r6;r5;r5;r5];
 
 % vector and values pre allocation
 y = [0,0];
@@ -45,10 +44,10 @@ errorH=0;
 errorT=0;
 
 % Decoupler
-yD21=0.002301;
-y1D21=7.897e-6;
-uD21=0.00619;
-u1D21=2.122e-5;
+yD21Const=0.002301;
+y1D21Const=7.897e-6;
+uD21Const=0.00619;
+u1D21Const=2.122e-5;
 for ct=1:N
     % error
     e = rVector(ct,:) - y;
@@ -59,8 +58,8 @@ for ct=1:N
     actionPFh = KpFh*e(1);
     actionPFc = KpFc*e(2);
 
-    uFh = [actionPFh + actionIFh];
-    uFc = [actionPFc + actionIFc];
+    uFh = actionPFh + actionIFh;
+    uFc = actionPFc + actionIFc;
 
     % saturation control action
     uFhSat = max(min(uFh,UB),LB);
@@ -80,7 +79,7 @@ for ct=1:N
     uFhSatDHelp=uFhSat+yD12;
     uFhSatD=max(min(uFhSatDHelp,UB),LB);
     
-    yD21=(uD21*uFhSat+u1D21*uVecD21(max(ct-1,1))-y1D21*yVecD21(max(ct-1,1)))/yD21;
+    yD21=(uD21Const*uFhSat+u1D21Const*uVecD21(max(ct-1,1))-y1D21Const*yVecD21(max(ct-1,1)))/yD21Const;
 %     yD21=uFhSat*2.69;
     uFcSatDHelp=uFcSat+yD21;
     uFcSatD=max(min(uFcSatDHelp,UB),LB);
@@ -159,7 +158,7 @@ hold off
 figure
 plot(uVecFh,'--r')
 hold on
-plot(uVecFcin,'--g')
+plot(uVecFcin,'.g')
 title("u")
 title("Regulator PI z odsprzęganiem"+newline+"sterowanie wejściowe obiektu"+newline+"sterowanie u");
 legend("Fh","Fcin", 'Location','best')
