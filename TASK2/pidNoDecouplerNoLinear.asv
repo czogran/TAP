@@ -1,12 +1,12 @@
-% PI regulator
+% PI regulato
 transferModelNoDelays;
 
 UseBackCalculation = true; % enable/disable anti-windup (back calculation)
 G=tf(transmit);
-KpFh = 2.5; KiFh = 0.01; % PI controller gains (parallel)
-KpFc = -0.4; KiFc = -0.002; % PI controller gains (parallel)
+KpFh = 0.9; KiFh = 0.01; % PI controller gains (parallel)
+KpFc = -0.2; KiFc = -0.002; % PI controller gains (parallel)
 
-Ts = Tp; % controller sample time
+Ts = 1; % controller sample time
 tau = 1; % reset time constant
 UB = 300; LB = 0; % saturation limits
 
@@ -20,8 +20,8 @@ r2=ones(interval,2).*[h0-10, T0];
 r3=ones(interval,2).*[h0+10, T0];
 r4=ones(interval,2).*[h0,T0-10];
 r5=ones(interval,2).*[h0,T0+10];
-r6=ones(interval,2).*[h0+10,T0-5];
-rVector=[r1;r1;r1;r6;r6;r6];
+r6=ones(interval,2).*[h0+10,T0-10];
+rVector=[r1;r2;r3;r4;r5;r6];
 
 % vector and values pre allocation
 y = [0,0];
@@ -35,15 +35,15 @@ uVecFcin= zeros(N+offset,2);
 actionIFh = 0;
 actionIFc = 0;
 
-errorH=0;
-errorT=0;
+errroH=0;
+errocT=0;
 
 
 for ct=1:N
     % error
     e = rVector(ct,:) - y;
-    errorH=errorH+e(1)^2;
-    errorT=errorT+e(2)^2;
+    errorH=e(1)^2;
+    errorT=e(2)^2;
     
     % control action
     actionPFh = KpFh*e(1);
@@ -104,7 +104,7 @@ end
 % remove offset
 yVec = yVec(1:N,:);
 uVecFh= uVecFh(1:N);
-uVecFcin= uVecFcin(1:N);
+uVecFcin= uVecFc(1:N);
 
 clf;
 figure(1);

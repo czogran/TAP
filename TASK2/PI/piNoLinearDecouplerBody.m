@@ -1,27 +1,4 @@
-% PI regulator
-transferModelNoDelays;
-
-UseBackCalculation = true; % enable/disable anti-windup (back calculation)
-G=tf(transmit);
-KpFh = 2.5; KiFh = 0.01; % PI controller gains (parallel)
-KpFc = -0.4; KiFc = -0.002; % PI controller gains (parallel)
-
-Ts = Tp; % controller sample time
-tau = 1; % reset time constant
-UB = 300; LB = 0; % saturation limits
-
-% closed-loop simulation (200 steps)
-N = 18000;
-
-% initial condition
-interval=N/6;
-r1 = ones(interval,2).*[h0, T0];
-r2=ones(interval,2).*[h0-10, T0];
-r3=ones(interval,2).*[h0+10, T0];
-r4=ones(interval,2).*[h0,T0-10];
-r5=ones(interval,2).*[h0,T0+10];
-r6=ones(interval,2).*[h0+10,T0-5];
-rVector=[r1;r1;r1;r6;r6;r6];
+% PI regulator body with no linear object  and decoupler
 
 % vector and values pre allocation
 y = [0,0];
@@ -32,12 +9,17 @@ uVecFh= zeros(N+offset,1);
 uVecFc= zeros(N+offset,2);
 uVecFcin= zeros(N+offset,2);
 
+uVecD21= zeros(N+offset,1);
+yVecD21= zeros(N+offset,2);
+
+uVecD12= zeros(N+offset,1);
+yVecD12= zeros(N+offset,2);
+
 actionIFh = 0;
 actionIFc = 0;
 
 errorH=0;
 errorT=0;
-
 
 for ct=1:N
     % error
@@ -55,11 +37,6 @@ for ct=1:N
     % saturation control action
     uFhSat = max(min(uFh,UB),LB);
     uFcSat = max(min(uFc,UB),LB);
-
-    uVecFh(ct) = uFhSat;
-    uVecFc(ct+delayC/Ts) = uFcSat;
-    uVecFcin(ct) = uFcSat;
-    u=[uVecFh(ct), uVecFc(ct)];
     
     % anti windup
     if UseBackCalculation
@@ -69,6 +46,28 @@ for ct=1:N
         actionIFh = actionIFh + KiFh*e(1)*Ts;
         actionIFc = actionIFc + KiFc*e(2)*Ts;
     end
+    
+    % decoupler     
+    yD12=uFcSat*(-1);
+    uFhSatDHelp=uFhSat+yD12;
+    uFhSatD=max(min(uFhSatDHelp,UB),LB);
+    
+    yD21=(uD21*uFhSat+u1D21*uVecD21(max(ct-1,1))-y1D21*yVecD21(max(ct-1,1)))/yD21;
+%     yD21=uFhSat*2.69;
+    uFcSatDHelp=uFcSat+yD21;
+    uFcSatD=max(min(uFcSatDHelp,UB),LB);
+
+    uVecFh(ct) = uFhSatD;
+    uVecFc(ct+delayC/Ts) = uFcSatD;
+    uVecFcin(ct) = uFcSatD;
+    
+    uVecD21(ct)= uFhSat;
+    yVecD21(ct)=yD21;
+    
+    uVecD12(ct)=uFcSat;
+    yVecD12(ct)=yD12;
+ 
+    u=[uVecFh(ct), uVecFc(ct)];
     
     V=volume(y(1));
     Finputs=[u,Fd];
@@ -105,6 +104,8 @@ end
 yVec = yVec(1:N,:);
 uVecFh= uVecFh(1:N);
 uVecFcin= uVecFcin(1:N);
+uVecFc= uVecFc(1:N);
+
 
 clf;
 figure(1);
@@ -112,7 +113,7 @@ plot(1:N,yVec(:,1),'r');
 hold on
 plot(rVector(:,1),'--b');
 xlabel('Time'); ylabel('Signal');
-title("Regulator PI bez odsprzęgania"+newline+"h[cm]" );
+title("Regulator PI z odsprzęganiem"+newline+"h[cm]" );
 xlabel("t[s]")
 ylabel("h[cm]")
 legend("h[cm]", "trajektoria zadana", 'Location','best')
@@ -122,7 +123,7 @@ figure(2);
 plot(1:N,yVec(:,2),'.r');
 hold on
 plot(rVector(:,2),'--b');
-title("Regulator PI bez odsprzęgania"+newline+"T[\circC]");
+title("Regulator PI z odsprzęganiem"+newline+"T[\circC]");
 xlabel('t[s]'); ylabel('T[\circC]');
 legend('temperatura [\circC]','trajektoria zadana', 'Location','best')
 hold off
@@ -132,8 +133,20 @@ plot(uVecFh,'--r')
 hold on
 plot(uVecFcin,'--g')
 title("u")
-title("Regulator PI bez odsprzęgania"+newline+"sterowanie u");
+title("Regulator PI z odsprzęganiem"+newline+"sterowanie wejściowe obiektu"+newline+"sterowanie u");
 legend("Fh","Fcin", 'Location','best')
+xlabel("t[s]")
+ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
+hold off
+
+
+figure
+plot(uVecD21,'--r')
+hold on
+plot(uVecD12,'--g')
+title("u")
+title("Regulator PI z odsprzęganiem"+newline+"sterowanie wyjściowe regulatorów"+newline+"sterowanie u");
+legend("PI 1","PI 2", 'Location','best')
 xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
