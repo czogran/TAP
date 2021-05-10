@@ -3,9 +3,9 @@ init
 
 % CONFIG
 % decoupler
-useDecoupler =false;
+useDecoupler =true;
 % disturbance
-disturbance = false;
+disturbance = true;
 % use linear object model
 useLinearModel = false;
 % dteremines for 0 simulations start from zero, if 1 it starts from work point
@@ -27,14 +27,16 @@ r2=ones(interval,2).*[h0-10, T0];
 r3=ones(interval,2).*[h0+10, T0];
 r4=ones(interval,2).*[h0,T0-10];
 r5=ones(interval,2).*[h0,T0+10];
-r6=ones(interval,2).*[h0+10,T0-5];
-rArray={[r1;r5;r6],[r1;r5;r6], [r1;r5;r6]};
+r6=ones(interval,2).*[h0+10,T0-10];
+r7=ones(interval,2).*[h0-10,T0+5];
+
+rArray={[r1;r6;r7],[r1;r2;r3], [r1;r4;r5]};
 rWorkPoint=[r1;r1;r1];
 % rVector=[r1;r5;r6];
 
 
 % path for saving
-fileName="step-responses";
+fileName="pi";
 overLeafFilePath="img/PI/";
 path="../img/PI/";
 
@@ -86,12 +88,18 @@ end
 
 % setup work point vectors for linear model
 if useLinearModel 
+     fileName=fileName+"LinearModel";
+    
     T0inputs=[Th0,Tc0,Td0];
-    F0inputs=[Fh0,Fcin0,Fd0];
+    F0inputs=[Fh0,Fc0,Fd0];
+else
+     fileName=fileName+"NoLinearModel";
 end
    
 
 if(initFactor==0)
+    fileName=fileName+"ZeroStart"
+    
     index = 0
     rVector=rWorkPoint;
     if useDecoupler
@@ -100,8 +108,11 @@ if(initFactor==0)
         piNoDecouplerBody
     end
 elseif disturbance
-     index=1;
+     iterator=1;
     for i =1: length(rFdArray)
+        iterator=iterator+1;
+        index= iterator+("Dist"+disturbance)+("Lin"+useLinearModel);
+        
         FdVector = rFdArray{i};
         TdVector = rTdArray{i};
         rVector=rWorkPoint;
@@ -110,18 +121,19 @@ elseif disturbance
         else
             piNoDecouplerBody;
         end
-        index=index+1;
     end
 else
-    index=1;
+    iterator=1;
     for i =1: length(rArray)
+        index= iterator+("Lin"+useLinearModel);
+        iterator=iterator+1;
+
         rVector = rArray{i};
         if useDecoupler
             piDecouplerBody;
         else
             piNoDecouplerBody;
         end
-        index=index+1;
     end
 end
 

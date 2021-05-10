@@ -1,16 +1,16 @@
 % PI regulator body with no linear object  and without decoupler
 
 % vector and values pre allocation
-y = [0,0];
+y = [h0,T0].*initFactor;
 
 offset=max(delayC,delayT);
-yVec = ones(N+offset,2).*[V0, T0].*initFactor;
+yVec = ones(N+offset,2).*[h0, T0].*initFactor;
 uVecFh= ones(N+offset,1)*Fh0*initFactor;
 uVecFc= ones(N+offset,1)*Fc0*initFactor;
 uVecFcin= ones(N+offset,1)*Fc0*initFactor;
 
-actionIFh = 0;
-actionIFc = 0;
+actionIFh = Fh0*initFactor;
+actionIFc = Fc0*initFactor;
 
 errroH=0;
 errocT=0;
@@ -144,7 +144,7 @@ else
     xlabel("t[s]")
     ylabel("Td[\circC]")
     hold off
-    sgtitle("Wartość zakłoceń")
+    sgtitle("Wartość zakłóceń")
    
     hold off
 

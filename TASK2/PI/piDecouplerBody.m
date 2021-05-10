@@ -1,22 +1,22 @@
 % PI regulator body with no linear object  and decoupler
 
 % vector and values pre allocation
-y = [0,0];
+y = [h0,T0].*initFactor;
 
 offset=max(delayC,delayT);
-yVec = ones(N+offset,2).*[V0, T0]*initFactor;
+yVec = ones(N+offset,2).*[h0, T0]*initFactor;
 uVecFh= ones(N+offset,1)*Fh0*initFactor;
 uVecFc= ones(N+offset,1)*Fc0*initFactor;
 uVecFcin= ones(N+offset,1)*Fc0*initFactor;
 
-uVecD21= ones(N+offset,1)*2.69*Fh*initFactor;
-yVecD21= ones(N+offset,1)*Fh*initFactor;
+uVecD21= ones(N+offset,1)*Fh0*initFactor;
+yVecD21= ones(N+offset,1)*Fc0*initFactor;
 
-uVecD12= ones(N+offset,1)*Fc0*0*initFactor;
-yVecD12= ones(N+offset,1)*Fc0*initFactor;
+uVecD12= ones(N+offset,1)*0;
+yVecD12= ones(N+offset,1)*0;
 
-actionIFh = 0;
-actionIFc = 0;
+actionIFh =  Fh0*initFactor;
+actionIFc = 0*Fc0*initFactor;
 
 errorH=0;
 errorT=0;
@@ -26,6 +26,7 @@ for ct=1:N
     % setup disturbance     
     FdInput = FdVector(ct);
     TdInput = TdVector(ct);
+    
     
     % error
     e = rVector(ct,:) - y;
@@ -76,8 +77,8 @@ for ct=1:N
     u=[uVecFh(ct), uVecFc(ct)];
     
     V=volume(y(1));
-    Finputs=[u,Fd];
-    Tinputs=[Th,Tc,Td];
+    Finputs=[u,FdInput];
+    Tinputs=[Th,Tc,TdInput];
     
     delay=1;
  
@@ -88,7 +89,7 @@ for ct=1:N
     end
     
     dV=Ts/6*(kV1+2*kV2+2*kV3+kV4);
-    V=V+dV;
+    V=max(0,V+dV);
     % output h     
     y(1)=heightFromVolume(V);
             
@@ -156,7 +157,7 @@ hold on
 plot(uVecD12,'g')
 title("u")
 title("Regulator PI z odsprzęganiem"+newline+"sterowanie wyjściowe regulatorów"+newline+"sterowanie u");
-legend("PI 1","PI 2", 'Location','best')
+legend("PI 1-> D21","PI 2-> D12", 'Location','best')
 xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
@@ -185,7 +186,7 @@ else
     xlabel("t[s]")
     ylabel("Td[\circC]")
     hold off
-    sgtitle("Wartość zakłoceń")
+    sgtitle("Wartość zakłóceń")
    
     hold off
 
