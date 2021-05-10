@@ -6,6 +6,7 @@ sysDys = c2d(sys,1);
 A = sysDys.A;
 B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
+Bmod = B;
 B = B(1:2, 1:2);
 
 N = 100;
@@ -152,24 +153,12 @@ for k=2:length(t)
         Fin = [Fin(1), FinVector(k - delayC, 2), Fin(3)];
     end
     
-    kV1= dVdt(heightFromVolume(V*ratio), delay, Fin);
-    kV2= dVdt(heightFromVolume(V*ratio + Tp/2*kV1),delay,Fin);
-    kV3= dVdt(heightFromVolume(V*ratio + Tp/2*kV2),delay,Fin);
-    kV4= dVdt(heightFromVolume(V*ratio + Tp*kV3),delay,Fin);
-    
-    kT1= dTdt(V*ratio,T,delay,Fin,Tin);
-    kT2= dTdt(V*ratio + Tp/2*kV1,T + Tp/2*kT1,delay,Fin,Tin);
-    kT3= dTdt(V*ratio + Tp/2*kV2,T + Tp/2*kT2,delay,Fin,Tin);
-    kT4= dTdt(V*ratio + Tp*kV3,T + Tp*kT3,delay,Fin,Tin);
-   
-    dV=Tp/6*(kV1+2*kV2+2*kV3+kV4)/ratio;
-    VVector(k)=V+dV;
-
-    
-    dT=Tp/6*(kT1+2*kT2+2*kT3+kT4);   
+    nxt = A * [V; T] + Bmod * [Fin, Tin]';
+    VVector(k) = nxt(1) + Vconst/ratio;
+    TVector(k) = nxt(2);
+     
     hVector(k)=heightFromVolume(VVector(k)*ratio);
     %dT=dTdt(V(k),T,delayFc,Finputs,Tinputs);
-    TVector(k)=TVector(k-1)+dT;
     if(k<=delayT)
         ToutputVector(k)=T0;
     else

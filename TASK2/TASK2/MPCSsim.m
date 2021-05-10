@@ -1,7 +1,4 @@
 %%--SYMULACJA DZIAŁANIA OBIEKTU--%
-%Polecenie: Zasymulować działanie obiektu w Matlabie
-
-%init data and inports
 step
 Umin = [0, 0];
 Umax = [100, 100];
@@ -169,31 +166,76 @@ for k=2:length(t)
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
 
+lambda = floor(100*lambda);
+
 u1 = FinVector(:,1);
 u2 = FinVector(:,2);
 Yzad1 = heightFromVolume(Yzad(:, 1).*ratio);
 Yzad2 = Yzad(:, 2);
 
-figure
-plot(t, hVector, 'b')
+fileName = "rkN" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+overLeafFilePath = "C:\Users\kacpe\Desktop\kody\sem8\TAP\TASK2\TASK2\img\MPCSanaRK\";
+
+heightFigure=figure;
+plot(hVector,'r');
 hold on
-plot(t, Yzad1, 'LineStyle', '--')
-title("Napełnianie zbiornika")
-xlabel("t[s]");
+plot(Yzad1,'--b');
+xlabel('Time'); ylabel('Signal');
+title("Regulator MPCS"+newline+"h[cm]" );
+xlabel("t[s]")
 ylabel("h[cm]")
+legend("h[cm]", "trajektoria zadana", 'Location','best')
 hold off
 
-figure
-plot(t,ToutputVector)
+tempFigure=figure;
+plot(TVector,'.r');
 hold on
-plot(t, Yzad2, 'LineStyle', '--')
-title("Tempteratura w zbiorniku")
-xlabel("t[s]");
-ylabel("T[\circC]")
+plot(Yzad2,'--b');
+title("Regulator MPCS"+newline+"T[\circC]");
+xlabel('t[s]'); ylabel('T[\circC]');
+legend('temperatura [\circC]','trajektoria zadana', 'Location','best')
 hold off
 
-figure
-plot(FinVector(:,1))
+controlPIFigure=figure;
+plot(u1,'r')
+hold on
+plot(u2,'g')
+title("u")
+title("Regulator MPCS"+newline+"sterowanie u");
+legend("Fh","Fcin", 'Location','best')
+xlabel("t[s]")
+ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
+hold off
+caption="Wykresy dla regulatora MPCS.";
+label="fig:MPCSRK"+'N' + string(N) + 'Nu' + string(Nu) + 'l' + string(lambda);
 
-figure
-plot(FinVector(:,2))
+heightName="MPCSRKH"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+tempName="MPCSRKT"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+controlPIName="MPCSRKControl"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+
+saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], "C:\Users\kacpe\Desktop\kody\sem8\TAP\TASK2\TASK2\img\",[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
+
+
+%figure
+%plot(t, hVector, 'b')
+%hold on
+%plot(t, Yzad1, 'LineStyle', '--')
+%title("Napełnianie zbiornika")
+%xlabel("t[s]");
+%ylabel("h[cm]")
+%hold off
+
+%figure
+%plot(t,ToutputVector)
+%hold on
+%plot(t, Yzad2, 'LineStyle', '--')
+%title("Tempteratura w zbiorniku")
+%xlabel("t[s]");
+%ylabel("T[\circC]")
+%hold off
+
+%figure
+%plot(FinVector(:,1))
+
+%figure
+%plot(FinVector(:,2))

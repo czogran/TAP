@@ -1,8 +1,9 @@
 %%--SYMULACJA DZIAŁANIA OBIEKTU--%
-%Polecenie: Zasymulować działanie obiektu w Matlabie
-
-%init data and inports
 step
+Umin = [0, 0];
+Umax = [100, 100];
+dUmin = [-0.2, -0.2];
+dUmax = [0.2, 0.2];
 sys = ss(A,B,C,D);
 sysDys = c2d(sys,1);
 A = sysDys.A;
@@ -132,17 +133,6 @@ for k=2:length(t)
         Fin = [Fin(1), Fc, Fin(3)];
     end
     
-    kV1= dVdt(heightFromVolume(V*ratio), delay, Fin);
-    kV2= dVdt(heightFromVolume(V*ratio + Tp/2*kV1),delay,Fin);
-    kV3= dVdt(heightFromVolume(V*ratio + Tp/2*kV2),delay,Fin);
-    kV4= dVdt(heightFromVolume(V*ratio + Tp*kV3),delay,Fin);
-    
-    kT1= dTdt(V*ratio,T,delay,Fin,Tin);
-    kT2= dTdt(V*ratio + Tp/2*kV1,T + Tp/2*kT1,delay,Fin,Tin);
-    kT3= dTdt(V*ratio + Tp/2*kV2,T + Tp/2*kT2,delay,Fin,Tin);
-    kT4= dTdt(V*ratio + Tp*kV3,T + Tp*kT3,delay,Fin,Tin);
-   
-    dV=Tp/6*(kV1+2*kV2+2*kV3+kV4)/ratio;
     nxt = A * [V; T] + Bmod * [Fin, Tin]';
     VVector(k) = nxt(1) + Vconst/ratio;
     TVector(k) = nxt(2);
