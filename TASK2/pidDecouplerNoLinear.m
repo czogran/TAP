@@ -3,7 +3,7 @@ init
 
 UseBackCalculation = true; % enable/disable anti-windup (back calculation)
 KpFh = 0.04; KiFh = 0.0004; % PI controller gains (parallel)
-KpFc = 40000; KiFc = -100000; % PI controller gains (parallel)
+KpFc = 0; KiFc = -0.01; % PI controller gains (parallel)
 
 Ts = Tp; % controller sample time
 tau = 1; % reset time constant
@@ -62,8 +62,9 @@ for ct=1:N
     uFc = actionPFc + actionIFc;
 
     % saturation control action
-    uFhSat = max(min(uFh,UB),LB);
-    uFcSat = max(min(uFc,UB),LB);
+    uFhSat = max(min(uFh,UB),-UB);
+    uFcSat = max(min(uFc,UB),-UB);
+    
     
     % anti windup
     if UseBackCalculation

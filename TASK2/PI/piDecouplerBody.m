@@ -40,9 +40,9 @@ for ct=1:N
     uFh = actionPFh + actionIFh;
     uFc = actionPFc + actionIFc;
 
-    % saturation control action
-    uFhSat = max(min(uFh,UB),LB);
-    uFcSat = max(min(uFc,UB),LB);
+    % saturation control action 
+    uFhSat = max(min(uFh,UB),-UB);
+    uFcSat = max(min(uFc,UB),-UB);
     
     % anti windup
     if UseBackCalculation

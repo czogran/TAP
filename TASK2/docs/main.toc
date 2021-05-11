@@ -1,0 +1,21 @@
+\contentsline {section}{\numberline {1}Opis Zadania}{3}{section.1}%
+\contentsline {section}{\numberline {2}Regulator PI bez odsprzęgania}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Dobrane nastawy regulatora PI}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}PI dla przykładowych przebiegów z obiektem nielinowym}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}PI dla przykładowych przebiegów z obiektem zlinearyzowanym}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}PI ze zmianą zakłócenia z obiektem nielinowym}{10}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Napełniania zbiornika do punktu pracy PI z modelem nieliniowym}{13}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Regulator PI z odsprzęganiem}{14}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Dobrane nastawy regulatora PI}{14}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}PI dla przykładowych przebiegów z obiektem nielinowym}{14}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}PI dla przykładowych przebiegów z obiektem zlinearyzowanym}{15}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}PI ze zmianą zakłócenia z obiektem nielinowym}{19}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Napełniania zbiornika do punktu pracy PI z modelem nieliniowym}{22}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Analityczny regulator predykcyjny MPCS}{24}{section.4}%
+\contentsline {section}{\numberline {5}Porównanie dwupętlowego regulatora PI z analitycznym regulatorem MPCS}{32}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Podobieństwa}{32}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Różnice}{32}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Numeryczny regulator predykcyjny MPCS}{33}{section.6}%
+\contentsline {section}{\numberline {7}Porównanie numerycznej i analitycznej wersji MPCS}{37}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Podobieństwa}{37}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Różnice}{37}{subsection.7.2}%

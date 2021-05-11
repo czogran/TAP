@@ -1,0 +1,16 @@
+\section{Numeryczny regulator predykcyjny MPCS}
+\indent W numerycznym regulatorze w każdej chwili $k$ rozwiązywane jest zadanie programowania kwadratowego, które uwzględnia ograniczenia sterowania. Znacznie zwiększa to już i tak dosyć długi czas obliczeń, dlatego przedstawione zostały jedynie przypadki tych regulatorów dla niewielkich wartości horyzontów, przez co jakość regulacji jest względnie niska. Musi również istnieć rozwiązanie quadprog dla danych trajektorii wartości zadanych, zostały więc one zmienione, żeby sterowanie było nieco prostsze. \\ \indent Wykresy przedstawiają działanie regulatora analitycznego oraz numerycznego dla takich samych parametrów regulatora. Regulator numeryczny działał zauważalnie lepiej dla wyjścia $V$, ale radził sobie nieco gorzej z opóźnieniami na wyjściu $T$, należy również zauważyć, że ze względu na krótszy czas obliczeń, regulator analityczny może brać pod uwagę większą ilość elementów odpowiedzi skokowej, podczas gdy regulator numeryczny działa z akceptowalną częstotliwością próbkowania jedynie dla względnie niskich horyzontów predykcji, przez co w rzeczywistości regulator analityczny może się sprawdzać lepiej. Regulatory działały z obiektem nieliniowym.
+
+
+
+\FloatBarrier
+    \input{img/MPCSnumRK/rkN100Nu50l50}
+\FloatBarrier
+
+\FloatBarrier
+    \input{img/MPCSnumRK/rkN50Nu10l20}
+\FloatBarrier
+
+\FloatBarrier
+    \input{img/MPCSnumRK/rkN80Nu30l30}
+\FloatBarrier

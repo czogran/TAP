@@ -1,0 +1,12 @@
+\section{Porównanie dwupętlowego regulatora PI z analitycznym regulatorem MPCS}
+\indent W poniższych podrozdziałach zostaną zaprezentowane podobieństwa i różnice pomiędzy analitycznym regulatorem MPCS i dwupętlowym PI. Wynika z nich, że jeśli dysponuje się małą mocą obliczeniową lepszy rozwiązaniem będzie prosty PI. Jeśli ma się do dyspozycji bardziej wydajny sprzęt i jest taka potrzeba podczas produkcji wskazane jest użycie regulatora predykcyjnego.
+\subsection{Podobieństwa}
+\indent Dla obu zmiana zadanej wartości wyjścia sprawia, że na drugim wyjściu pojawia się uchyb.
+\indent Oba regulatory są w stanie odpowiednio ustawić sterowania, by osiągnąć wartości zadane.
+\indent Oba są podatne na błędy linearyzacji.
+\subsection{Różnice}
+\begin{itemize}
+    \item Regulator PI działa zdecydowanie szybciej i wymaga mniejszej mocy obliczeniowej
+    \item Regulator PI ma generalnie większe wartości uchybów na wyjściu drugim wyjściu po zmianie wartości zadanej na pierwszym wyjściu.
+    \item Sygnały sterujące dla regulatora predykcyjnego są mniej rozmyte, tzn regulator szybciej dobiera odpowiednią wartość sterowania dla wartości zadanej.
+\end{itemize}

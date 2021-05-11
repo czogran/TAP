@@ -1,0 +1,21 @@
+\BOOKMARK [1][-]{section.1}{Opis Zadania}{}% 1
+\BOOKMARK [1][-]{section.2}{Regulator PI bez odsprzegania}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Dobrane nastawy regulatora PI}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{PI dla przyk\233adowych przebieg\363w z obiektem nielinowym}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{PI dla przyk\233adowych przebieg\363w z obiektem zlinearyzowanym}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{PI ze zmiana zak\233\363cenia z obiektem nielinowym}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Nape\233niania zbiornika do punktu pracy PI z modelem nieliniowym}{section.2}% 7
+\BOOKMARK [1][-]{section.3}{Regulator PI z odsprzeganiem}{}% 8
+\BOOKMARK [2][-]{subsection.3.1}{Dobrane nastawy regulatora PI}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.2}{PI dla przyk\233adowych przebieg\363w z obiektem nielinowym}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.3}{PI dla przyk\233adowych przebieg\363w z obiektem zlinearyzowanym}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.4}{PI ze zmiana zak\233\363cenia z obiektem nielinowym}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.5}{Nape\233niania zbiornika do punktu pracy PI z modelem nieliniowym}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{Analityczny regulator predykcyjny MPCS}{}% 14
+\BOOKMARK [1][-]{section.5}{Por\363wnanie dwupetlowego regulatora PI z analitycznym regulatorem MPCS}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{Podobienstwa}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{R\363znice}{section.5}% 17
+\BOOKMARK [1][-]{section.6}{Numeryczny regulator predykcyjny MPCS}{}% 18
+\BOOKMARK [1][-]{section.7}{Por\363wnanie numerycznej i analitycznej wersji MPCS}{}% 19
+\BOOKMARK [2][-]{subsection.7.1}{Podobienstwa}{section.7}% 20
+\BOOKMARK [2][-]{subsection.7.2}{R\363znice}{section.7}% 21

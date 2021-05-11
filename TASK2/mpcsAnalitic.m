@@ -1,9 +1,11 @@
 transferModel
 
-N=400;
-Nu=50;
+N=300;
+Nu=100;
 simLength=20000;
 Tp;
+
+ratio=100;
 
 nu=2;
 ny=2;
@@ -11,8 +13,8 @@ psi=1;
 lambda=1;
 
 % control boundaries
-duMin = -0.05;
-duMax = 0.05;
+duMin = -5;
+duMax = 5;
 uMin=0;
 uMax=300;
 
@@ -34,15 +36,15 @@ K=(M'*psiMatrix*M+lambdaMatrix)^(-1)*M'*psiMatrix;
 K1=K(1:nu,:);
 
 % initial condition
-r1 = [1000, -5];
+r1 = [1000, 5];
 r2=[V0-2000, T0-10];
 rVector=[zeros(simLength/2,2);ones(simLength/2,2).*r1];
 
 x0=[V0;T0];
 
 % vector pre allocation
-uVecIn=zeros(simLength,6);
-uVec=zeros(simLength,6);
+uVecIn=ones(simLength,6).*[Fh0;Fc0;Fd0;Th0;Tc0;Td0]';
+uVec=ones(simLength,6).*[Fh0;Fc0;Fd0;Th0;Tc0;Td0]';
 
 yVec=zeros(ny,simLength);
 x0=[V0;T0];
@@ -75,7 +77,7 @@ for k=3:simLength
     dU=K1*( repmat(yZk',N,1)-CtAt*x-CtV*BDAll*uPrev-CtV*v);
 
     du(1)=max(min(dU(1),duMax), duMin);
-    du(2)=max(min(dU(2),duMax), duMin);
+    du(2)=max(min(dU(2),0.005), -0.005);
     
     uFh(k)=max(min(uFh(k-1)+du(1),uMax),uMin);
     uFcin(k)=max(min(uFcin(k-1)+du(2),uMax),uMin);
@@ -84,10 +86,10 @@ for k=3:simLength
     V=y(1);
     
 %     TODO jak jest Fcin to smiga
-    Finputs=[[uFh(k),uFc(k)],Fd];
+    Finputs=[uFh(k),uFc(k),Fd];
     Tinputs=[Th,Tc,Td];
     
-    uVecIn(k,:)=[Finputs,Tinputs];
+    uVecIn(k,:)=[[uFh(k),uFcin(k),Fd],Tinputs];
     uVec(k,:)=[[[uFh(k),uFc(k)],Fd],Tinputs];
 
     delay=1;

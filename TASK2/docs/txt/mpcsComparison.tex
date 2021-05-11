@@ -1,0 +1,15 @@
+\section{Porównanie numerycznej i analitycznej wersji MPCS}
+\subsection{Podobieństwa}
+\begin{itemize}
+    \item Dla niskich wartości horyzontów predykcji zbiegają dosyć wolno do wartości zadanej
+    \item Wysoka złożoność obliczeniowa
+    \item Dobre działanie dla odpowiednio dobranych parametrów
+    \item Brak sprzężenia zwrotnego, podatność na błędy linearyzacji
+    \item W ogólności powinny działać lepiej niż PI
+\end{itemize}
+\subsection{Różnice}
+\begin{itemize}
+    \item Wersja numeryczna ma niewielkie przeregulowania i niewielkie oscylacje dla niskich wartości horyzontów, analityczna mocno dla nich oscyluje
+    \item Wersja analityczna działa nieco lepiej dla niskich opóźnień, a wersja numeryczna nieco lepiej dla wysokich opóźnień
+    \item Pomimo iż oba są wymagające obliczeniowo, wersja numeryczna wymaga znacznie większej ilości obliczeń niż wersja analityczna
+\end{itemize}

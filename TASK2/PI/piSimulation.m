@@ -21,17 +21,20 @@ UB = 300; LB = 0; % saturation limits
 N = 18000;
 
 % initial condition
-interval=N/3;
+interval=N/4;
 r1 = ones(interval,2).*[h0, T0];
 r2=ones(interval,2).*[h0-10, T0];
 r3=ones(interval,2).*[h0+10, T0];
-r4=ones(interval,2).*[h0,T0-10];
+r4=ones(interval,2).*[h0,T0-5];
 r5=ones(interval,2).*[h0,T0+10];
 r6=ones(interval,2).*[h0+10,T0-10];
 r7=ones(interval,2).*[h0-10,T0+5];
+r8=ones(interval,2).*[h0+5,T0-5];
+r9=ones(interval,2).*[h0,T0-10];
+r10=ones(interval,2).*[h0+20,T0];
 
-rArray={[r1;r6;r7],[r1;r2;r3], [r1;r4;r5]};
-rWorkPoint=[r1;r1;r1];
+rArray={[r1;r8;r6;r7],[r1;r3;r2;r10], [r1;r4;r5;r9]};
+rWorkPoint=[r1;r1;r1;r1];
 % rVector=[r1;r5;r6];
 
 
@@ -74,10 +77,11 @@ if disturbance
     rTd1 = ones(interval,1)*(Td0);
     rTd2=ones(interval,1)*(Td0+10);
     rTd3=ones(interval,1)*(Td0-10);
+
     
     % arrays with disturbance, must be same length     
-    rFdArray={[rFd1 ;rFd2 ;rFd3] [rFd1; rFd1; rFd1]};
-    rTdArray={[rTd1 ;rTd1 ;rTd1] [rTd1; rTd2 ;rTd3]};
+    rFdArray={[rFd1 ;rFd2 ;rFd3;rFd2] [rFd1; rFd1; rFd1;rFd3]};
+    rTdArray={[rTd1 ;rTd1;rTd1 ;rTd2] [rTd1; rTd2 ;rTd3;rTd3]};
 else
     overLeafFilePath=overLeafFilePath+"noDisturbance/";
     path=path+"noDisturbance/";
