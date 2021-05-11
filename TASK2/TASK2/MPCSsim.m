@@ -12,13 +12,8 @@ B = sysDys.B;
 B(1, :) = B(1,:)/ratio;
 B = B(1:2, 1:2);
 
-N = size(S);
-N = N(3);
-Nu = N;
-
-
-N = 300;
-Nu = 100;
+N = 500;
+Nu = 60;
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
@@ -28,7 +23,7 @@ end
 dimM = size(M);
 
 psi = 1;
-lambda = 0.1;
+lambda = 0.4;
 
 Psi = eye(N*2)*psi;
 Lambda = eye(Nu*2)*lambda;
@@ -89,6 +84,11 @@ Tinputs=[Th,Tc,Td];
 FinVector = ones(length(t), 3).*Finputs;
 TinVector = ones(length(t), 3).*Tinputs;
 
+FinVector(1:4000, 3) = Fd;
+FinVector(4001:8000, 3) = Fd + 5;
+FinVector(8001:12000, 3) = Fd;
+FinVector(12001:16000, 3) = Fd - 5;
+FinVector(16001:20000, 3) = Fd + 5;
 E = 0;
 
 Tin = Tinputs;
@@ -165,7 +165,7 @@ for k=2:length(t)
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
-
+lorg = lambda;
 lambda = floor(100*lambda);
 
 u1 = FinVector(:,1);
@@ -173,8 +173,8 @@ u2 = FinVector(:,2);
 Yzad1 = heightFromVolume(Yzad(:, 1).*ratio);
 Yzad2 = Yzad(:, 2);
 
-fileName = "rkN" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
-overLeafFilePath = "C:\Users\kacpe\Desktop\kody\sem8\TAP\TASK2\TASK2\img\MPCSanaRK\";
+fileName = "distrkN" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+overLeafFilePath = "img/MPCSanaRK/";
 
 heightFigure=figure;
 plot(hVector,'r');
@@ -200,20 +200,21 @@ controlPIFigure=figure;
 plot(u1,'r')
 hold on
 plot(u2,'g')
+plot(FinVector(:,3),'b')
 title("u")
 title("Regulator MPCS"+newline+"sterowanie u");
-legend("Fh","Fcin", 'Location','best')
+legend("Fh","Fcin","Fd", 'Location','best')
 xlabel("t[s]")
 ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
 hold off
-caption="Wykresy dla regulatora MPCS.";
-label="fig:MPCSRK"+'N' + string(N) + 'Nu' + string(Nu) + 'l' + string(lambda);
+caption="Wykresy dla regulatora MPCS, obiekt nieliniowy.";
+label="fig:distMPCSRK"+'N' + string(N) + 'Nu' + string(Nu) + 'l' + string(lambda);
 
-heightName="MPCSRKH"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
-tempName="MPCSRKT"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
-controlPIName="MPCSRKControl"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+heightName="distMPCSRKH"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+tempName="distMPCSRKT"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+controlPIName="distMPCSRKControl"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
 
-saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], "C:\Users\kacpe\Desktop\kody\sem8\TAP\TASK2\TASK2\img\",[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
+saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], "img/MPCSanaRK/",[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
 
 
 %figure

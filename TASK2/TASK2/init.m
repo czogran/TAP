@@ -2,6 +2,7 @@ clc;
 clear;
 close all;
 addpath('..\common\');
+addpath('..\common\utils\');
 
 %DATA
 %F-> dV/dT [cm^3/s]

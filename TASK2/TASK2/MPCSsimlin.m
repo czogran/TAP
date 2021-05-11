@@ -17,8 +17,8 @@ N = N(3);
 Nu = N;
 
 
-N = 300;
-Nu = 100;
+N = 500;
+Nu = 60;
 
 M=zeros(N*2,Nu*2);
 for i=1:N, M((i-1)*2+1:(i-1)*2+2,1:2)=S(:,:,min(i,Dyn)); end
@@ -28,7 +28,7 @@ end
 dimM = size(M);
 
 psi = 1;
-lambda = 0.1;
+lambda = 0.4;
 
 Psi = eye(N*2)*psi;
 Lambda = eye(Nu*2)*lambda;
@@ -152,32 +152,51 @@ for k=2:length(t)
     E = E + sum((Yzad(k, :) - [VVector(k), TVector(k)]).^2);
 %     Tvector(k)=Tvector(k-1)+ dVdTdt/V(k);
 end
-
+lorg = lambda;
+lambda = floor(100*lambda);
 u1 = FinVector(:,1);
 u2 = FinVector(:,2);
 Yzad1 = heightFromVolume(Yzad(:, 1).*ratio);
 Yzad2 = Yzad(:, 2);
 
-figure
-plot(t, hVector, 'b')
+fileName = "LinN" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+overLeafFilePath = "img/MPCSanaLin/";
+
+heightFigure=figure;
+plot(hVector,'r');
 hold on
-plot(t, Yzad1, 'LineStyle', '--')
-title("Napełnianie zbiornika")
-xlabel("t[s]");
+plot(Yzad1,'--b');
+xlabel('Time'); ylabel('Signal');
+title("Regulator MPCS"+newline+"h[cm]" );
+xlabel("t[s]")
 ylabel("h[cm]")
+legend("h[cm]", "trajektoria zadana", 'Location','best')
 hold off
 
-figure
-plot(t,ToutputVector)
+tempFigure=figure;
+plot(TVector,'.r');
 hold on
-plot(t, Yzad2, 'LineStyle', '--')
-title("Tempteratura w zbiorniku")
-xlabel("t[s]");
-ylabel("T[\circC]")
+plot(Yzad2,'--b');
+title("Regulator MPCS"+newline+"T[\circC]");
+xlabel('t[s]'); ylabel('T[\circC]');
+legend('temperatura [\circC]','trajektoria zadana', 'Location','best')
 hold off
 
-figure
-plot(FinVector(:,1))
+controlPIFigure=figure;
+plot(u1,'r')
+hold on
+plot(u2,'g')
+title("u")
+title("Regulator MPCS"+newline+"sterowanie u");
+legend("Fh","Fcin", 'Location','best')
+xlabel("t[s]")
+ylabel("u[$\frac{cm^3}{s}$]",'Interpreter','latex')
+hold off
+caption="Wykresy dla regulatora MPCS, obiekt liniowy.";
+label="fig:MPCSLin"+'N' + string(N) + 'Nu' + string(Nu) + 'l' + string(lambda);
 
-figure
-plot(FinVector(:,2))
+heightName="MPCSLinH"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+tempName="MPCSLinT"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+controlPIName="MPCSLinControl"+"N" + string(N) + "Nu" + string(Nu) + "l" + string(lambda);
+
+saveFiguresInColumn([heightFigure,tempFigure,controlPIFigure], "img/MPCSanaLin/",[heightName,tempName,controlPIName],fileName,overLeafFilePath,caption,label);
