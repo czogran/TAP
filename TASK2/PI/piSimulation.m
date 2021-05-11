@@ -5,7 +5,7 @@ init
 % decoupler
 useDecoupler =true;
 % disturbance
-disturbance = true;
+disturbance = false;
 % use linear object model
 useLinearModel = false;
 % dteremines for 0 simulations start from zero, if 1 it starts from work point

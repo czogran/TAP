@@ -2,7 +2,7 @@ transferModel
 
 N=400;
 Nu=50;
-simLength=20000;
+simLength=3000;
 Tp;
 
 nu=2;
@@ -11,8 +11,8 @@ psi=1;
 lambda=1;
 
 % control boundaries
-duMin = -0.05;
-duMax = 0.05;
+duMin = -1;
+duMax = 1;
 uMin=0;
 uMax=300;
 
@@ -34,9 +34,9 @@ K=(M'*psiMatrix*M+lambdaMatrix)^(-1)*M'*psiMatrix;
 K1=K(1:nu,:);
 
 % initial condition
-r1 = [1000, -5];
+r1 = [10, 0];
 r2=[V0-2000, T0-10];
-rVector=[zeros(simLength/2,2);ones(simLength/2,2).*r1];
+rVector=[zeros(2000,2);ones(2000,2)];
 
 x0=[V0;T0];
 
@@ -62,33 +62,32 @@ du=zeros(1,6);
 for k=3:simLength
     yZk=rVector(k,:);
     
-    uPrev=uVecIn(k-1,:)'-[Fh0;Fc0;Fd0;Th0;Tc0;Td0];
+    uPrev=uVecIn(k-1,:)';
 %     uPrev=zeros(6,1);
 
     x=xVec(:,k)-x0;
     xPrev=xVec(:,k-1)-x0;
     v = x-AD*xPrev-BDAll*uPrev;
+    
 %     v=[0;0];
     
 %     dU=K1*(yZk'-CtAt*yPrev-CtV*BDAll*uVec(k-2,:)'-CtV*v);
     
-    dU=K1*( repmat(yZk',N,1)-CtAt*x-CtV*BDAll*uPrev-CtV*v);
+    dU=K1*(yZk-CtAt*x-CtV*BDAll*uPrev-CtV*v);
 
-    du(1)=max(min(dU(1),duMax), duMin);
-    du(2)=max(min(dU(2),duMax), duMin);
+    du(1)=max(min(dU(1,1),duMax), duMin);
+    du(2)=max(min(dU(2,1),duMax), duMin);
     
     uFh(k)=max(min(uFh(k-1)+du(1),uMax),uMin);
     uFcin(k)=max(min(uFcin(k-1)+du(2),uMax),uMin);
-    uFc(k+delayC)=max(min(uFc(k-1+delayC)+du(2),uMax),uMin);
+    uFc(k+delayC)=max(min(uFcin(k-1+delayC)+du(2),uMax),uMin);
 
     V=y(1);
-    
-%     TODO jak jest Fcin to smiga
     Finputs=[[uFh(k),uFc(k)],Fd];
     Tinputs=[Th,Tc,Td];
     
     uVecIn(k,:)=[Finputs,Tinputs];
-    uVec(k,:)=[[[uFh(k),uFc(k)],Fd],Tinputs];
+    uVec(k,:)=[[[uFh(k),uFcin(k)],Fd],Tinputs];
 
     delay=1;
     
@@ -120,21 +119,21 @@ end
 figure
 plot(yVec(1,:))
 hold on
-plot(rVector(:,1)+V0)
+plot(rVector(:,1))
 title("V")
 hold off
 
 figure
 plot(yVec(2,:))
 hold on
-plot(rVector(:,2)+T0)
+plot(rVector(:,2))
 title("T")
 hold off
 
 figure
 plot(uFh)
 hold on
-plot(uFc)
+plot(uFcin)
 legend("uFh", "uFc")
 title("u")
 hold off
